@@ -14,37 +14,42 @@ struct Item {
 };
 
 struct Being {
-    int str;
-    int dex;
-    int iq;
-    int sta;
-    int cstr;
-    int cdex;
-    int ciq;
-    int csta;
+    int Str;
+    int Dex;
+    int Int;
+    int Vit;
+    int cStr;
+    int cDex;
+    int cInt;
+    int cVit;
     list<Item> stuff;
     Being(){
-        str=1;
-        dex=1;
-        iq=1;
-        sta=1;
-        cstr=1;
-        cdex=1;
-        ciq=1;
-        csta=1;
+        Str=1;
+        Dex=1;
+        Int=1;
+        Vit=1;
+        cStr=1;
+        cDex=1;
+        cInt=1;
+        cVit=1;
     }
 };
+void setup(){
 
-int main()
-{
-    font.loadFromFile("fonts/thestrong.ttf");
-    sf::Text text;
+}
 
-// select the font
+struct StatementBox{
+    string statements[7];
+    int noOfLines;
+    StatementBox(){
+        for(int i =0;i<7;i++){
+            statements[i].assign("");
+            noOfLines=0;
+        }
+        // select the font
 text.setFont(font); // font is a sf::Font
 
 // set the string to display
-text.setString("You are attacked by an unarmed goblin!");
 
 // set the character size
 text.setCharacterSize(24); // in pixels, not points!
@@ -55,7 +60,39 @@ text.setFillColor(sf::Color::Red);
 // set the text style
 text.setStyle(sf::Text::Bold | sf::Text::Underlined);
 text.setPosition(sf::Vector2f(100.f, 500.f));
+addStatement("You are attacked by an unarmed goblin!");
 
+    };
+    void addStatement(string statement){
+        if(noOfLines==7){
+            for(int i=0;i<6;i++){
+                statements[i].assign(statements[i+1]);
+            }
+            statements[6].assign(statement);
+        }else{
+            statements[noOfLines++].assign(statement);
+        }
+        string longStatement="";
+        for(int i=0;i<7;i++){
+            longStatement+=statements[i]+"\n";
+        }
+        text.setString(longStatement);
+    };
+    sf::Text text;
+};
+    StatementBox msg;
+int noOfPlayers=5;
+int currentPlayer=1;
+void nextCharacter(){
+    currentPlayer++;
+    if(currentPlayer>noOfPlayers)currentPlayer=1;
+
+    msg.addStatement(currentPlayer<=4?"Player " +to_string(currentPlayer)+" attacks. Missed!" :"Goblin attacks. Missed!");
+}
+
+int main()
+{
+    font.loadFromFile("fonts/thestrong.ttf");
 
 sf::Texture texture, ch1t, ch2t, ch3t, ch4t;
     texture.loadFromFile("Gob.png");
@@ -85,9 +122,16 @@ ch4.setScale(sf::Vector2f(0.75f, 0.75f));
 
     sf::RenderWindow window(sf::VideoMode(1200, 700), "SFML works!");
 
-
+sf::Clock clock;
+sf::Time elapsed;
+window.setFramerateLimit(20);
     while (window.isOpen())
     {
+        elapsed = clock.getElapsedTime();
+        if(elapsed.asSeconds()>1){
+            clock.restart();
+            nextCharacter();
+        }
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -101,10 +145,9 @@ window.draw(ch1);
 window.draw(ch2);
 window.draw(ch3);
 window.draw(ch4);
-window.draw(text);
+window.draw(msg.text);
 
         window.display();
-        sf::sleep( sf::milliseconds(30) ) ;
     }
 
     return 0;
