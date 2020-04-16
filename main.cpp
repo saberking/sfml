@@ -70,6 +70,7 @@ window.draw(ch4);
 window.draw(text);
 
         window.display();
+        sf::sleep( sf::milliseconds(30) ) ;
     }
 
     return 0;
