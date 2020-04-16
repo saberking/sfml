@@ -1,5 +1,39 @@
 #include <SFML/Graphics.hpp>
+#include <stdlib.h>
+#include<list>
 sf::Font font;
+using namespace std;
+struct Item {
+    string name;
+    string type;
+    int weight;
+    Item(string _name, string _type, int _weight):weight{_weight}{
+        name.assign(_name);
+        type.assign(_type);
+    }
+};
+
+struct Being {
+    int str;
+    int dex;
+    int iq;
+    int sta;
+    int cstr;
+    int cdex;
+    int ciq;
+    int csta;
+    list<Item> stuff;
+    Being(){
+        str=1;
+        dex=1;
+        iq=1;
+        sta=1;
+        cstr=1;
+        cdex=1;
+        ciq=1;
+        csta=1;
+    }
+};
 
 int main()
 {
