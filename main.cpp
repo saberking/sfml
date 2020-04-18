@@ -8,42 +8,25 @@ sf::RenderWindow window(sf::VideoMode(1200, 700), "Gob");
 
 
 
-sf::Sprite sprite, ch1, ch2, ch3, ch4, blood, sidebarSprite;
-sf::Texture texture, ch1t, ch2t, ch3t, ch4t, bloodt;
+sf::Sprite blood, sidebarSprite;
+sf::Texture bloodt;
 sf::RenderTexture sidebar;
 void setup(){
 
     srand(time(NULL));
         font.loadFromFile("fonts/thestrong.ttf");
-
-    texture.loadFromFile("Gob.png");
-sprite.setTexture(texture);
-    ch1t.loadFromFile("pics/ch1.png");
-ch1.setTexture(ch1t);
-ch1.setPosition(sf::Vector2f(0.f, 100.f));
-ch1.setScale(sf::Vector2f(0.75f, 0.75f));
-    ch2t.loadFromFile("pics/ch2.png");
-ch2.setTexture(ch2t);
-ch2.setPosition(sf::Vector2f(0.f, 250.f));
-ch2.setScale(sf::Vector2f(0.75f, 0.75f));
-    ch3t.loadFromFile("pics/ch3.png");
-ch3.setTexture(ch3t);
-ch3.setPosition(sf::Vector2f(0.f, 400.f));
-ch3.setScale(sf::Vector2f(0.75f, 0.75f));
-
-    ch4t.loadFromFile("pics/ch4.png");
-ch4.setTexture(ch4t);
-ch4.setPosition(sf::Vector2f(0.f, 550.f));
-ch4.setScale(sf::Vector2f(0.75f, 0.75f));
+for(int i=0;i<4;i++){
+    chars[i].sprite.setPosition(sf::Vector2f(0.f, (float)80+153*i));
+    chars[i].resizeTexture(0.75f,0.75f);
+}
 bloodt.loadFromFile("blood.png");
 blood.setTexture(bloodt);
 blood.setPosition(sf::Vector2f(400.f,200.f));
 blood.setScale(sf::Vector2f(0.75f,0.75f));
     sidebar.create(1200,700);
-    sidebar.draw(ch1);
-    sidebar.draw(ch2);
-    sidebar.draw(ch3);
-    sidebar.draw(ch4);
+    for(int i = 0;i<4;i++){
+        sidebar.draw(chars[i].sprite);
+    }
     sidebar.display();
 sidebarSprite.setTexture(sidebar.getTexture());
 sidebarSprite.setPosition(900.f,0.f);
