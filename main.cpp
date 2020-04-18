@@ -8,8 +8,8 @@ sf::RenderWindow window(sf::VideoMode(1200, 700), "Gob");
 
 
 
-sf::Sprite sprite, ch1, ch2, ch3, ch4;
-sf::Texture texture, ch1t, ch2t, ch3t, ch4t;
+sf::Sprite sprite, ch1, ch2, ch3, ch4, blood;
+sf::Texture texture, ch1t, ch2t, ch3t, ch4t, bloodt;
 
 void setup(){
     srand(time(NULL));
@@ -34,6 +34,10 @@ ch3.setScale(sf::Vector2f(0.75f, 0.75f));
 ch4.setTexture(ch4t);
 ch4.setPosition(sf::Vector2f(900.f, 550.f));
 ch4.setScale(sf::Vector2f(0.75f, 0.75f));
+bloodt.loadFromFile("blood.png");
+blood.setTexture(bloodt);
+blood.setPosition(sf::Vector2f(400.f,200.f));
+blood.setScale(sf::Vector2f(0.75f,0.75f));
 }
 
 
@@ -72,6 +76,7 @@ window.draw(ch2);
 window.draw(ch3);
 window.draw(ch4);
 window.draw(msg.text);
+if(goblin.sta<=0)window.draw(blood);
 
         window.display();
     }
