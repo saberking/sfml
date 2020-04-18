@@ -31,6 +31,11 @@ struct Being {
     list<Item> stuff;
     string name;
     bool standing;
+    sf::Sprite sprite;
+    sf::Texture texture;
+    void resizeTexture(float x, float y){
+                sprite.setScale(sf::Vector2f(x, y));
+    }
     Being(string _name, bool _hostile=false){
         Str=1;
         Dex=1;
@@ -47,9 +52,11 @@ struct Being {
         sta=Vit*5;
         standing=true;
         hostile=_hostile;
+        texture.loadFromFile("pics/"+name+".png");
+        sprite.setTexture(texture);
     }
 };
-Being p1("p1"), p2("p2"), p3("p3"), p4("p4"), goblin("goblin", true);
+Being p1("ch1"), p2("ch2"), p3("ch3"), p4("ch4"), goblin("gob", true);
 Being chars[4]={p1,p2,p3,p4};
 
 sf::Font font;
