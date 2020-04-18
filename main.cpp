@@ -1,48 +1,12 @@
 #include <SFML/Graphics.hpp>
 #include <stdlib.h>
 #include<list>
+#include "structs.hpp"
 sf::Font font;
-using namespace std;
-struct Item {
-    string name;
-    string type;
-    int weight;
-    Item(string _name, string _type, int _weight):weight{_weight}{
-        name.assign(_name);
-        type.assign(_type);
-    }
-};
+
     sf::RenderWindow window(sf::VideoMode(1200, 700), "SFML works!");
 
-struct Being {
-    int Str;
-    int Dex;
-    int Int;
-    int Vit;
-    int cStr;
-    int cDex;
-    int cInt;
-    int cVit;
-    int com, ban, mag;
-    int sta;
-    list<Item> stuff;
-    string name;
-    Being(string _name){
-        Str=1;
-        Dex=1;
-        Int=1;
-        Vit=1;
-        cStr=1;
-        cDex=1;
-        cInt=1;
-        cVit=1;
-        com=0;
-        ban=0;
-        mag=0;
-        name=_name;
-        sta=Vit*5;
-    }
-};
+
 Being p1("p1"), p2("p2"), p3("p3"), p4("p4"), goblin("goblin");
 Being chars[4]={p1,p2,p3,p4};
 sf::Sprite sprite, ch1, ch2, ch3, ch4;
@@ -75,6 +39,7 @@ ch4.setScale(sf::Vector2f(0.75f, 0.75f));
 int attackRoll(Being &a, Being &d){
     int att=rand()%6+a.com+a.Dex;
     int def=rand()%6+d.com+d.Dex;
+    if(!d.standing)def-=4;
     return att-def;
 }
 struct StatementBox{
@@ -120,7 +85,9 @@ addStatement("You are attacked by an unarmed goblin!");
     sf::Text text;
 };
 bool checkBalance(Being &a){
-    return rand()%6<a.Dex;
+    bool bal= rand()%6<a.Dex;
+    if(!bal) a.standing=false;
+    return bal;
 }
     StatementBox msg;
 int noOfPlayers=5;
@@ -136,17 +103,37 @@ void nextCharacter(){
         attacker=&goblin;
         defender=&chars[rand()%4];
     }
-    string message=attacker->name+" attacks "+defender->name+".";
-    int dam=attackRoll(*attacker, *defender);
-    if(dam<1){
-        message+=" Missed!";
-        if(!checkBalance(*attacker))message+=" "+attacker->name+" falls over!";
+    if(attacker->sta<=0) msg.addStatement(attacker->name+ " is unconscious!");
+    else if(attacker->standing){
+        string message=attacker->name+" attacks "+defender->name+".";
+        if(!defender->standing){
+            msg.addStatement(message);
+            message=defender->name+ " is lying on the floor!";
+        }
+        int dam=attackRoll(*attacker, *defender);
+        if(dam<1){
+            message+=" Missed!";
+            if(!checkBalance(*attacker)){
+                int loss=rand()%5+1;
+                msg.addStatement(message);
+                message=attacker->name+" falls over! "+to_string(loss)+" stamina lost.";
+                attacker->sta-=loss;
+                    msg.addStatement(message);
+
+            }
+        }else{
+            dam*=attacker->Str;
+            defender->sta-=dam;
+            message+=" "+to_string(dam)+" stamina lost.";
+            msg.addStatement(message);
+            if(defender->sta<=0) msg.addStatement(defender->name+ " falls unconscious!");
+            else if(defender->sta<defender->cVit*2.5) msg.addStatement(defender-> name+ " is winded.");
+        }
     }else{
-        dam*=attacker->Str;
-        defender->sta-=dam;
-        message+=" "+to_string(dam)+" stamina lost.";
+        msg.addStatement(attacker->name+" stands up!");
+        attacker->standing=true;
     }
-    msg.addStatement(message);
+
 }
 
 int main()
@@ -162,7 +149,7 @@ window.setFramerateLimit(20);
     while (window.isOpen())
     {
         elapsed = clock.getElapsedTime();
-        if(elapsed.asSeconds()>1){
+        if(elapsed.asSeconds()>2){
             clock.restart();
             nextCharacter();
         }
