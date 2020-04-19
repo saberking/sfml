@@ -25,3 +25,6 @@ struct Weapon: public Item{
         def=d;
     }
 };
+struct Club:public Weapon{
+    Club():Weapon("club",1, 0){}
+};

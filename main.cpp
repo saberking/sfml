@@ -5,6 +5,8 @@
 #include "code/being.hpp"
 
 #include "code/structs.hpp"
+#include "code/messages.hpp"
+#include "code/battle.hpp"
 
 sf::RenderWindow window(sf::VideoMode(1200, 700), "Gob");
 
@@ -166,6 +168,13 @@ void leftClick(sf::Vector2i pos){
 }
 void rightClick(sf::Vector2i pos){
             Clickable *target=getClickTarget(pos);
+            if(target!=NULL){
+                if(target->objectType=="chest"){
+                    msg.addStatement("You smash the chest! P1 gets a club!");
+                    chars[0].weapon=new Club();
+                    store.west=new View();
+                }
+            }
 
 }
 
