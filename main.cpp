@@ -36,7 +36,8 @@ compass.setTexture(compasst);
 compass.setPosition(1060,560);
 needlet.loadFromFile("other/needle.png");
 needle.setTexture(needlet);
-needle.setPosition(1060,560);
+needle.setPosition(1119,619);
+needle.setOrigin(59,59);
 }
 
 
@@ -47,6 +48,14 @@ bool mouseInRegion(Region const &region){
 void setDirection(string direction){
     if(currentRoom->hasView(direction))
     currentDirection=direction;
+}
+void needleDirection(string direction){
+    if(direction=="north")needle.setRotation(0);
+        if(direction=="east")needle.setRotation(90);
+            if(direction=="south")needle.setRotation(180);
+    if(direction=="west")needle.setRotation(270);
+
+
 }
 int main(){
     setupRooms();
@@ -119,6 +128,7 @@ if(inCombat){
 else window.draw(currentRoom->getView(currentDirection)->sprite);
 window.draw(sidebarSprite);
 window.draw(compass);
+needleDirection(currentDirection);
 window.draw(needle);
 if(inCombat&&goblin.sta<=0)window.draw(blood);
 

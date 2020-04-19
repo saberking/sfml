@@ -55,6 +55,10 @@ struct View{
         texture.loadFromFile("rooms/"+name+".png");
         sprite.setTexture(texture);
     };
+    View(){
+                texture.loadFromFile("rooms/cellEast.png");
+        sprite.setTexture(texture);
+    }
 };
 WayOn cellArch;
 struct Room{
@@ -66,9 +70,17 @@ struct Room{
         if(direction=="south")return south;
         return west;
     }
-    Room(string _name){
+    Room(string _name, string views="n"){
         name=_name;
         north=new View(name+"North");
+        if(views.find("e")!=string::npos)east=new View(name+"East");
+        else east=new View();
+                if(views.find("s")!=string::npos)east=new View(name+"South");
+                else south=new View();
+                        if(views.find("w")!=string::npos)east=new View(name+"West");
+                        else west=new View();
+
+
     };
     ~Room(){
         delete north;
@@ -85,7 +97,7 @@ struct Room{
     }
 
 };
-struct Room cell("cell");
+struct Room cell("cell", "e");
 struct Room passage("passage");
 struct Room *currentRoom;
 void setupRooms(){
