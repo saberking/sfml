@@ -44,21 +44,23 @@ struct Clickable{
 };
 struct WayOn:public Clickable{
     Room *destination;
+    string entryDirection="north";
     WayOn():Clickable("way on"){};
 };
 struct View{
-    bool north=false;
-    bool east=false;
-    bool south=false;
-    bool west=false;
+    sf::Sprite sprite;
+    sf::Texture texture;
+    std::vector<Clickable *> clickables;
+    View(string name){
+        texture.loadFromFile("rooms/"+name+".png");
+        sprite.setTexture(texture);
+    };
 };
 WayOn cellArch;
 struct Room{
-    sf::Sprite north, east, south, west;
-    sf::Texture northt, eastt, southt, westt;
     string name;
-    View view;
-    sf::Sprite getSprite(string direction){
+    View *north, *east, *south, *west;
+    View* getView(string direction){
         if(direction=="north")return north;
         if(direction=="east") return east;
         if(direction=="south")return south;
@@ -66,16 +68,20 @@ struct Room{
     }
     Room(string _name){
         name=_name;
-        northt.loadFromFile("rooms/"+name+".png");
-        north.setTexture(northt);
-        view.north=true;
+        north=new View(name+"North");
+    };
+    ~Room(){
+        delete north;
+        delete east;
+        delete south;
+        delete west;
     }
-    std::vector<Clickable *> clickables;
+
     bool hasView(string direction){
-        if(direction=="north")return view.north;
-        if(direction=="east")return view.east;
-        if(direction=="south")return view.south;
-        return view.west;
+        if(direction=="north")return (bool)north;
+        if(direction=="east")return (bool)east;
+        if(direction=="south")return (bool)south;
+        return (bool)west;
     }
 
 };
@@ -85,7 +91,7 @@ struct Room *currentRoom;
 void setupRooms(){
     currentRoom=&cell;
     cellArch.destination=&passage;
-    cell.clickables.push_back(&cellArch);
+    cell.north->clickables.push_back(&cellArch);
 }
 struct Being {
     int Str;

@@ -85,15 +85,18 @@ int main(){
                     }
                 }else{
                     Room *destination=currentRoom;
-                    for(vector<Clickable*>::iterator it=currentRoom->clickables.begin();
-                        it!=currentRoom->clickables.end();it++){
+                    string newDirection=currentDirection;
+                    for(vector<Clickable*>::iterator it=currentRoom->getView(currentDirection)->clickables.begin();
+                        it!=currentRoom->getView(currentDirection)->clickables.end();it++){
                         printf((*it)->objectType.c_str());
                         if(!(*it)->objectType.compare("way on")){
                             if(mouseInRegion((*it)->region))
                             destination=((WayOn*)*it)->destination;
+                            newDirection=((WayOn*)*it)->entryDirection;
                         }
                     }
                     currentRoom=destination;
+                    currentDirection=newDirection;
                 }
                 
             }
@@ -113,7 +116,7 @@ if(inCombat){
     window.draw(goblin.sprite);
     window.draw(msg.text);
 }
-else window.draw(currentRoom->getSprite(currentDirection));
+else window.draw(currentRoom->getView(currentDirection)->sprite);
 window.draw(sidebarSprite);
 window.draw(compass);
 window.draw(needle);
