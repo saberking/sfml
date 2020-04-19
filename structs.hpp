@@ -33,6 +33,7 @@ struct Region{
 };
 struct Region fs;
 struct Region lft(0, 699, 0, 599);
+struct Region leverRegion(100, 400, 400, 800);
 Region chestRegion(360,610,400,800);
 Region rgt(0, 699, 600, 1199);
 struct Room;
@@ -41,6 +42,12 @@ struct Clickable{
     string objectType;
     Clickable(string _type, Region *reg=&fs):objectType{_type}{
         region=reg;
+    }
+};
+struct Lever:public Clickable{
+    string leverType;
+    Lever(string _levertype):Clickable("lever",&leverRegion){
+        leverType=_levertype;
     }
 };
 struct WayOn:public Clickable{
@@ -112,7 +119,9 @@ struct Room cell("cell", "n");
 struct Room passage("passage", "ns");
 struct Room store("store", "we");
 Room bossRoom("bossRoom", "nesw");
+Room pit("pit","e");
 struct Room *currentRoom;
+
 void setupRooms(){
     currentRoom=&cell;
     cell.north->clickables.push_back(new WayOn(&passage));
@@ -122,6 +131,7 @@ void setupRooms(){
     store.east->clickables.push_back(new WayOn(&passage, "east"));
     bossRoom.west->clickables.push_back(new WayOn(&passage, "west"));
     store.west->clickables.push_back(new Chest(10));
+    bossRoom.east->clickables.push_back(new Lever("pit trap"));
 }
 struct Being {
     int Str;

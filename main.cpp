@@ -150,6 +150,10 @@ int main(){
 
                                     ((Chest*)(*it))->gold=0;
                                 }
+                                if(!(*it)->objectType.compare("lever")){
+                                    destination=&pit;
+                                    msg.addStatement("You fall down a pit trap!");
+                                }
                             }
 
                     }
