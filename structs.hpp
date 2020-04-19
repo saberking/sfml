@@ -60,7 +60,7 @@ struct View{
         sprite.setTexture(texture);
     }
 };
-WayOn cellArch;
+WayOn cellArch, passageSouth;
 struct Room{
     string name;
     View *north, *east, *south, *west;
@@ -75,9 +75,9 @@ struct Room{
         north=new View(name+"North");
         if(views.find("e")!=string::npos)east=new View(name+"East");
         else east=new View();
-                if(views.find("s")!=string::npos)east=new View(name+"South");
+                if(views.find("s")!=string::npos)south=new View(name+"South");
                 else south=new View();
-                        if(views.find("w")!=string::npos)east=new View(name+"West");
+                        if(views.find("w")!=string::npos)west=new View(name+"West");
                         else west=new View();
 
 
@@ -98,12 +98,15 @@ struct Room{
 
 };
 struct Room cell("cell", "e");
-struct Room passage("passage");
+struct Room passage("passage", "s");
 struct Room *currentRoom;
 void setupRooms(){
     currentRoom=&cell;
     cellArch.destination=&passage;
     cell.north->clickables.push_back(&cellArch);
+    passageSouth.destination=&cell;
+    passageSouth.entryDirection="south";
+    passage.south->clickables.push_back(&passageSouth);
 }
 struct Being {
     int Str;
