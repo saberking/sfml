@@ -10,15 +10,7 @@
 using namespace std;
 bool inCombat=true;
 int gold=0;
-struct Item {
-    string name;
-    string type;
-    int weight;
-    Item(string _name, string _type, int _weight):weight{_weight}{
-        name.assign(_name);
-        type.assign(_type);
-    }
-};
+
 struct Region{
     int top;
     int bottom;
@@ -135,60 +127,7 @@ void setupRooms(){
     bossRoom.east->clickables.push_back(new Lever("pit trap"));
     pit.east->clickables.push_back(new WayOn(&sewer, "east"));
 }
-struct Being {
-    int Str;
-    int Dex;
-    int Int;
-    int Vit;
-    int cStr;
-    int cDex;
-    int cInt;
-    int cVit;
-    int com, ban, mag;
-    int sta;
-    bool hostile;
-    list<Item> stuff;
-    string name;
-    bool standing;
-    sf::Sprite sprite;
-    sf::Texture texture;
-    void resizeTexture(float x, float y){
-                sprite.setScale(sf::Vector2f(x, y));
-    }
-    Being(string _name, bool _hostile=false){
-        Str=1;
-        Dex=1;
-        Int=1;
-        Vit=1;
-        cStr=1;
-        cDex=1;
-        cInt=1;
-        cVit=1;
-        com=0;
-        ban=0;
-        mag=0;
-        name=_name;
-        sta=Vit*5;
-        standing=true;
-        hostile=_hostile;
-        texture.loadFromFile("pics/"+name+".png");
-        sprite.setTexture(texture);
-    }
-    ~Being(){}
-};
-struct Monster:public Being{
-    int gold;
-    Monster(string _name, int g):Being(_name, true){
-        gold=g;
-    }
-};
-struct Goblin:public Monster{
-    Goblin():Monster("gob", 10){
 
-    }
-};
-Being p1("ch1"), p2("ch2"), p3("ch3"), p4("ch4");
-Being chars[4]={p1,p2,p3,p4};
 
 sf::Font font;
 
@@ -382,8 +321,8 @@ struct Battle{
  
     };
     int attackRoll(Being &a, Being &d){
-        int att=rand()%6+a.com+a.Dex;
-        int def=rand()%6+d.com+d.Dex;
+        int att=rand()%6+a.getAttackBonus();
+        int def=rand()%6+d.getDefenceBonus();
         if(!d.standing)def-=4;
         return att-def;
     }

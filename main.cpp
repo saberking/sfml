@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include<list>
 #include<deque>
-#include "structs.hpp"
+#include "code/being.hpp"
+
+#include "code/structs.hpp"
 
 sf::RenderWindow window(sf::VideoMode(1200, 700), "Gob");
 
@@ -109,6 +111,64 @@ void turnRight(){
     turnLeft();
     turnLeft();
 }
+Clickable* getClickTarget(sf::Vector2i pos){
+            for(vector<Clickable*>::iterator it=currentRoom->getView(currentDirection)->clickables.begin();
+        it!=currentRoom->getView(currentDirection)->clickables.end();it++){
+            if(mouseInRegion((*it)->region)) return *it;
+        }
+        return NULL;
+}
+void leftClick(sf::Vector2i pos){
+    if(pos.x>1060&&pos.y>560){
+        if(pos.y-620>pos.x-1120){
+            if(pos.y-620<1120-pos.x){
+                setDirection("west");
+            }else{
+                setDirection("south");
+            }
+        }else{
+            if(pos.y-620<1120-pos.x){
+                setDirection("north");
+            }else{
+                setDirection("east");
+            }
+        }
+    }else if (pos.x>1060&&pos.y>310&&pos.y<430){
+        camp();
+    }else if (pos.x>1140)turnRight();
+    else if (pos.x<60)turnLeft();
+    else{
+        Room *destination=currentRoom;
+        string newDirection=currentDirection;
+        Clickable *target=getClickTarget(pos);
+        if (target!=NULL){
+            if(!target->objectType.compare("way on")){
+                destination=((WayOn*)target)->destination;
+                newDirection=((WayOn*)target)->entryDirection;
+
+            }
+            if(!target->objectType.compare("chest")){
+                msg.addStatement("You got "+to_string(((Chest*)target)->gold)+" gold!");
+                                                    gold+=((Chest*)target)->gold;
+
+                ((Chest*)target)->gold=0;
+            }
+            if(!target->objectType.compare("lever")){
+                destination=&pit;
+                msg.addStatement("You fall down a pit trap!");
+            }
+
+        }
+        currentRoom=destination;
+        currentDirection=newDirection;
+    }
+    
+}
+void rightClick(sf::Vector2i pos){
+            Clickable *target=getClickTarget(pos);
+
+}
+
 int main(){
     setupRooms();
     setup();
@@ -129,53 +189,8 @@ int main(){
                 window.close();
             if(event.type==sf::Event::MouseButtonPressed&&!inCombat){
                 sf::Vector2i pos=sf::Mouse::getPosition(window);
-
-                if(pos.x>1060&&pos.y>560){
-                    if(pos.y-620>pos.x-1120){
-                        if(pos.y-620<1120-pos.x){
-                            setDirection("west");
-                        }else{
-                            setDirection("south");
-                        }
-                    }else{
-                        if(pos.y-620<1120-pos.x){
-                            setDirection("north");
-                        }else{
-                            setDirection("east");
-                        }
-                    }
-                }else if (pos.x>1060&&pos.y>310&&pos.y<430){
-                    camp();
-                }else if (pos.x>1140)turnRight();
-                else if (pos.x<60)turnLeft();
-                else{
-                    Room *destination=currentRoom;
-                    string newDirection=currentDirection;
-                    for(vector<Clickable*>::iterator it=currentRoom->getView(currentDirection)->clickables.begin();
-                        it!=currentRoom->getView(currentDirection)->clickables.end();it++){
-                            if(mouseInRegion((*it)->region)){
-                                if(!(*it)->objectType.compare("way on")){
-                                    destination=((WayOn*)*it)->destination;
-                                    newDirection=((WayOn*)*it)->entryDirection;
-
-                                }
-                                if(!(*it)->objectType.compare("chest")){
-                                    msg.addStatement("You got "+to_string(((Chest*)(*it))->gold)+" gold!");
-                                                                        gold+=((Chest*)(*it))->gold;
-
-                                    ((Chest*)(*it))->gold=0;
-                                }
-                                if(!(*it)->objectType.compare("lever")){
-                                    destination=&pit;
-                                    msg.addStatement("You fall down a pit trap!");
-                                }
-                            }
-
-                    }
-                    currentRoom=destination;
-                    currentDirection=newDirection;
-                }
-                
+                if(event.mouseButton.button==sf::Mouse::Button::Left)leftClick(pos);
+                else rightClick(pos);
             }
         }
                 elapsed = clock.getElapsedTime();
