@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 using namespace std;
-bool inCombat=true, hostility=true;
+bool inCombat=true;
 int gold=0;
 struct Item {
     string name;
@@ -273,9 +273,11 @@ struct Battle{
     int peaceTimer;
     void start(){
         Goblin *gob=new Goblin();
+        monsters.clear();
         monsters.push_back(gob);
         inCombat=true;
         peaceTimer=5;
+        combatants.clear();
         for(int i=0;i<4;i++){
             if(chars[i].sta>0)combatants.push_back(&chars[i]);
         }
@@ -304,7 +306,7 @@ struct Battle{
         vector<Being*>friends=getFriends();
         vector<Being*>enemies=getEnemies();
         Being *defender;
-
+        printf("%s's turn!!enemies:%d,frieds:&d,combatants:%d",(*current)->name.c_str(),enemies.size(),friends.size(),combatants.size());
         if(enemies.size()){
             if(!(*current)->hostile){
                 defender=enemies[0];
@@ -362,9 +364,8 @@ struct Battle{
 
         }else {
             msg.addStatement("You have defeated the goblin!");
-            hostility=false;
+            peaceTimer--;
         }
-                    if(!hostility)peaceTimer--;
             if(peaceTimer<=0)end();
  
     };
