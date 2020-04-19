@@ -118,6 +118,7 @@ struct Room{
 struct Room cell("cell", "n");
 struct Room passage("passage", "ns");
 struct Room store("store", "we");
+struct Room sewer("sewer", "nesw");
 Room bossRoom("bossRoom", "nesw");
 Room pit("pit","e");
 struct Room *currentRoom;
@@ -132,6 +133,7 @@ void setupRooms(){
     bossRoom.west->clickables.push_back(new WayOn(&passage, "west"));
     store.west->clickables.push_back(new Chest(10));
     bossRoom.east->clickables.push_back(new Lever("pit trap"));
+    pit.east->clickables.push_back(new WayOn(&sewer, "east"));
 }
 struct Being {
     int Str;
