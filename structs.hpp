@@ -4,9 +4,11 @@
 #include<string>
 #include <deque>
 #include <SFML/Graphics.hpp>
+#include <conio.h>
+#include <stdio.h>
 
 using namespace std;
-
+bool inCombat=true, hostility=true;
 struct Item {
     string name;
     string type;
@@ -16,6 +18,54 @@ struct Item {
         type.assign(_type);
     }
 };
+struct Region{
+    int top;
+    int bottom;
+    int left;
+    int right;
+    Region(int _top=0, int _bottom=699,int _left=0, int _right=1199){
+        top=_top;
+        bottom=_bottom;
+        left=_left;
+        right=_right;
+    }
+};
+struct Region fs;
+struct Region left(0, 699, 0, 599);
+Region right(0, 699, 600, 1199);
+struct Room;
+struct Clickable{
+    Region region;
+    string objectType;
+    Clickable(string _type):objectType{_type}{
+        region=fs;
+        printf("Foo");
+    }
+};
+struct WayOn:public Clickable{
+    Room *destination;
+    WayOn():Clickable("way on"){};
+};
+WayOn cellArch;
+struct Room{
+    sf::Sprite sprite;
+    sf::Texture texture;
+    string name;
+    Room(string _name){
+        name=_name;
+        texture.loadFromFile("rooms/"+name+".png");
+        sprite.setTexture(texture);
+    }
+    std::vector<Clickable *> clickables;
+};
+struct Room cell("cell");
+struct Room passage("passage");
+struct Room *currentRoom;
+void setupRooms(){
+    currentRoom=&cell;
+    cellArch.destination=&passage;
+    cell.clickables.push_back(&cellArch);
+}
 struct Being {
     int Str;
     int Dex;
@@ -179,7 +229,10 @@ struct Battle{
                 (*current)->standing=true;
             }
 
-        }else msg.addStatement("You have defeated the goblin!");
+        }else {
+            msg.addStatement("You have defeated the goblin!");
+            hostility=false;
+        }
  
     };
     int attackRoll(Being &a, Being &d){

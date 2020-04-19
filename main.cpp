@@ -33,9 +33,13 @@ sidebarSprite.setPosition(900.f,0.f);
 }
 
 
-
+bool mouseInRegion(Region const &region){
+    sf::Vector2i pos=sf::Mouse::getPosition(window);
+    return pos.x>=region.left && pos.x<=region.right&&pos.y>=region.top&&pos.y<=region.bottom;
+}
 
 int main(){
+    setupRooms();
     setup();
 
 
@@ -45,6 +49,7 @@ int main(){
 
     window.setFramerateLimit(20);
     Battle battle;
+    int peacetimer=5;
     while (window.isOpen())
     {
 
@@ -52,20 +57,37 @@ int main(){
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+            if(event.type==sf::Event::MouseButtonPressed&&!inCombat){
+                Room *destination=currentRoom;
+                for(vector<Clickable*>::iterator it=currentRoom->clickables.begin();
+                    it!=currentRoom->clickables.end();it++){
+                    printf((*it)->objectType.c_str());
+                    if(!(*it)->objectType.compare("way on")){
+                        if(mouseInRegion((*it)->region))
+                        destination=((WayOn*)*it)->destination;
+                    }
+                }
+                currentRoom=destination;
+            }
         }
                 elapsed = clock.getElapsedTime();
-        if(elapsed.asSeconds()>1){
+        if(elapsed.asSeconds()>0.1){
             clock.restart();
-            if(msg.queue.empty())
-            battle.nextCharacter();
-            else msg.print();
+            if(msg.queue.empty()){
+                if(inCombat)battle.nextCharacter();
+            }else msg.print();
+            if(!hostility)peacetimer--;
+            if(peacetimer<=0)inCombat=false;
         }
 
         window.clear();
-window.draw(goblin.sprite);
+if(inCombat){
+    window.draw(goblin.sprite);
+    window.draw(msg.text);
+}
+else window.draw(currentRoom->sprite);
 window.draw(sidebarSprite);
-window.draw(msg.text);
-if(goblin.sta<=0)window.draw(blood);
+if(inCombat&&goblin.sta<=0)window.draw(blood);
 
         window.display();
     }
