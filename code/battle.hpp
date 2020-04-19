@@ -47,6 +47,58 @@ struct Battle{
         }
         return vec;
     }
+    void castSpell(Being &a, Being &d){
+        msg.addStatement(a.name+" casts fireball at "+d.name);
+        int castingCost=rand()%6;
+        castingCost-=a.cInt;
+        if(castingCost<a.sta){
+            int dam=(rand()%6)*a.cInt;
+            d.sta-=dam;
+            msg.addStatement(to_string(dam)+" stamina lost!");
+        }else {
+            msg.addStatement("Spell fizzles!");
+        }
+        a.sta-=castingCost;
+    }
+    void ko(void *a){
+                                msg.addStatement(((Being*)a)->name+" falls unconscious!");
+                                if(((Being*)a)->hostile){
+                                    addGold(((Monster*)a)->gold);
+                                }
+                                Being *toDelete=(Being*)a;
+                                if(a==*current){
+                                    if(current==combatants.begin()){
+                                        current=--combatants.end();
+                                    }else current--;
+                                }
+                                combatants.remove(toDelete);
+    }
+    void attack(Being &a, Being &d){
+                string message=a.name+" attacks "+d.name+".";
+                if(!d.standing){
+                    msg.addStatement(message);
+                    message=d.name+ " is lying on the floor!";
+                }
+                int dam=attackRoll(a, d);
+                if(dam<1){
+                    message+=" Missed!";
+                    if(!checkBalance(a)){
+                        int loss=rand()%5+1;
+                        msg.addStatement(message);
+                        message=a.name+" falls over! "+to_string(loss)+" stamina lost.";
+                        a.sta-=loss;
+                            msg.addStatement(message);
+  
+                    }
+                }else{
+                    dam*=a.Str;
+                    d.sta-=dam;
+                    message+=" "+to_string(dam)+" stamina lost.";
+                    msg.addStatement(message);
+
+                }
+
+    }
     void nextCharacter(){
         if(current==combatants.end()||++current==combatants.end()){
             current=combatants.begin();
@@ -62,54 +114,23 @@ struct Battle{
                 defender=friends.at(rand()%friends.size());
             }
             if((*current)->standing){
-                string message=(*current)->name+" attacks "+defender->name+".";
-                if(!defender->standing){
-                    msg.addStatement(message);
-                    message=defender->name+ " is lying on the floor!";
-                }
-                int dam=attackRoll(*(*current), *defender);
-                if(dam<1){
-                    message+=" Missed!";
-                    if(!checkBalance(*(*current))){
-                        int loss=rand()%5+1;
-                        msg.addStatement(message);
-                        message=(*current)->name+" falls over! "+to_string(loss)+" stamina lost.";
-                        (*current)->sta-=loss;
-                            msg.addStatement(message);
-                            if((*current)->sta<=0){
-                                msg.addStatement((*current)->name+" falls unconscious!");
-                                if((*current)->hostile){
-                                    Monster *m=(Monster*)(*current);
-                                    addGold(m->gold);
-                                }
-                                Being *toDelete=*current;
-                                if(current==combatants.begin()){
-                                    current=--combatants.end();
-                                }else current--;
-
-                                combatants.remove(toDelete);
-                            }
-                    }
+                if(rand()%2){
+                    attack(**current, *defender);
                 }else{
-                    dam*=(*current)->Str;
-                    defender->sta-=dam;
-                    message+=" "+to_string(dam)+" stamina lost.";
-                    msg.addStatement(message);
-                    if(defender->sta<=0){
-                        msg.addStatement(defender->name+ " falls unconscious!");
-                        if(defender->hostile){
-                                                                Monster *m=(Monster*)(defender);
-                                    addGold(m->gold);
-                        }
-                        combatants.remove(defender);
-                    }
-                    else if(defender->sta<defender->cVit*2.5) msg.addStatement(defender-> name+ " is winded.");
+                    castSpell(**current, *defender);
                 }
+
             }else{
                 msg.addStatement((*current)->name+" stands up!");
                 (*current)->standing=true;
             }
+            list<Being*>knockouts(combatants.size());
+            auto it=copy_if(combatants.begin(),combatants.end(),knockouts.begin(), [](Being *b){return b->sta<=0;});
+            knockouts.resize(distance(knockouts.begin(), it));
 
+            for(list<Being*>::iterator it=knockouts.begin();it!=knockouts.end();it++){
+                    ko(*it);
+            }
         }else {
             msg.addStatement("You have defeated the enemies!");
             end();

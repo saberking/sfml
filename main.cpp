@@ -10,7 +10,7 @@
 
 sf::RenderWindow window(sf::VideoMode(1200, 700), "Gob");
 
-
+float turnLength=0.5;
 
 sf::Sprite blood, sidebarSprite, compass, needle, bag, tent;
 sf::Texture bloodt, compasst, needlet, bagt, tentt;
@@ -210,7 +210,7 @@ int main(){
             battle.start(currentRoom->resident);
         }
                 elapsed = clock.getElapsedTime();
-        if(elapsed.asSeconds()>0.1){
+        if(elapsed.asSeconds()>turnLength){
             clock.restart();
             if(msg.queue.empty()){
                 if(inCombat)battle.nextCharacter();
