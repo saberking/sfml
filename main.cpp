@@ -12,6 +12,15 @@ sf::Sprite blood, sidebarSprite, compass, needle;
 sf::Texture bloodt, compasst, needlet;
 sf::RenderTexture sidebar;
 string currentDirection="north";
+void redrawSidebar(){
+    sidebar.clear( sf::Color(0, 0, 0, 0));
+    for(int i = 0;i<4;i++){
+        if(chars[i].sta>0)sidebar.draw(chars[i].sprite);
+    }
+    sidebar.display();
+sidebarSprite.setTexture(sidebar.getTexture());
+sidebarSprite.setPosition(900.f,0.f);
+}
 void setup(){
 
     srand(time(NULL));
@@ -24,13 +33,7 @@ bloodt.loadFromFile("blood.png");
 blood.setTexture(bloodt);
 blood.setPosition(sf::Vector2f(400.f,200.f));
 blood.setScale(sf::Vector2f(0.75f,0.75f));
-    sidebar.create(1200,700);
-    for(int i = 0;i<4;i++){
-        sidebar.draw(chars[i].sprite);
-    }
-    sidebar.display();
-sidebarSprite.setTexture(sidebar.getTexture());
-sidebarSprite.setPosition(900.f,0.f);
+
 compasst.loadFromFile("other/compass.png");
 compass.setTexture(compasst);
 compass.setPosition(1060,560);
@@ -38,6 +41,8 @@ needlet.loadFromFile("other/needle.png");
 needle.setTexture(needlet);
 needle.setPosition(1119,619);
 needle.setOrigin(59,59);
+        sidebar.create(1200,700);
+
 }
 
 
@@ -128,7 +133,7 @@ if(inCombat){
     window.draw(goblin.sprite);
 }
     window.draw(msg.text);
-
+redrawSidebar();
 window.draw(sidebarSprite);
 window.draw(compass);
 needleDirection(currentDirection);
