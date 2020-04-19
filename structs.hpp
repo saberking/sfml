@@ -46,17 +46,38 @@ struct WayOn:public Clickable{
     Room *destination;
     WayOn():Clickable("way on"){};
 };
+struct View{
+    bool north=false;
+    bool east=false;
+    bool south=false;
+    bool west=false;
+};
 WayOn cellArch;
 struct Room{
-    sf::Sprite sprite;
-    sf::Texture texture;
+    sf::Sprite north, east, south, west;
+    sf::Texture northt, eastt, southt, westt;
     string name;
+    View view;
+    sf::Sprite getSprite(string direction){
+        if(direction=="north")return north;
+        if(direction=="east") return east;
+        if(direction=="south")return south;
+        return west;
+    }
     Room(string _name){
         name=_name;
-        texture.loadFromFile("rooms/"+name+".png");
-        sprite.setTexture(texture);
+        northt.loadFromFile("rooms/"+name+".png");
+        north.setTexture(northt);
+        view.north=true;
     }
     std::vector<Clickable *> clickables;
+    bool hasView(string direction){
+        if(direction=="north")return view.north;
+        if(direction=="east")return view.east;
+        if(direction=="south")return view.south;
+        return view.west;
+    }
+
 };
 struct Room cell("cell");
 struct Room passage("passage");

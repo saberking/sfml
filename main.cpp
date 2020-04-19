@@ -8,9 +8,10 @@ sf::RenderWindow window(sf::VideoMode(1200, 700), "Gob");
 
 
 
-sf::Sprite blood, sidebarSprite;
-sf::Texture bloodt;
+sf::Sprite blood, sidebarSprite, compass, needle;
+sf::Texture bloodt, compasst, needlet;
 sf::RenderTexture sidebar;
+string currentDirection="north";
 void setup(){
 
     srand(time(NULL));
@@ -30,6 +31,12 @@ blood.setScale(sf::Vector2f(0.75f,0.75f));
     sidebar.display();
 sidebarSprite.setTexture(sidebar.getTexture());
 sidebarSprite.setPosition(900.f,0.f);
+compasst.loadFromFile("other/compass.png");
+compass.setTexture(compasst);
+compass.setPosition(1060,560);
+needlet.loadFromFile("other/needle.png");
+needle.setTexture(needlet);
+needle.setPosition(1060,560);
 }
 
 
@@ -37,7 +44,10 @@ bool mouseInRegion(Region const &region){
     sf::Vector2i pos=sf::Mouse::getPosition(window);
     return pos.x>=region.left && pos.x<=region.right&&pos.y>=region.top&&pos.y<=region.bottom;
 }
-
+void setDirection(string direction){
+    if(currentRoom->hasView(direction))
+    currentDirection=direction;
+}
 int main(){
     setupRooms();
     setup();
@@ -58,16 +68,34 @@ int main(){
             if (event.type == sf::Event::Closed)
                 window.close();
             if(event.type==sf::Event::MouseButtonPressed&&!inCombat){
-                Room *destination=currentRoom;
-                for(vector<Clickable*>::iterator it=currentRoom->clickables.begin();
-                    it!=currentRoom->clickables.end();it++){
-                    printf((*it)->objectType.c_str());
-                    if(!(*it)->objectType.compare("way on")){
-                        if(mouseInRegion((*it)->region))
-                        destination=((WayOn*)*it)->destination;
+                sf::Vector2i pos=sf::Mouse::getPosition(window);
+                if(pos.x>1060&&pos.y>560){
+                    if(pos.y-620>pos.x-1120){
+                        if(pos.y-620<1120-pos.x){
+                            setDirection("west");
+                        }else{
+                            setDirection("south");
+                        }
+                    }else{
+                        if(pos.y-620<1120-pos.x){
+                            setDirection("north");
+                        }else{
+                            setDirection("east");
+                        }
                     }
+                }else{
+                    Room *destination=currentRoom;
+                    for(vector<Clickable*>::iterator it=currentRoom->clickables.begin();
+                        it!=currentRoom->clickables.end();it++){
+                        printf((*it)->objectType.c_str());
+                        if(!(*it)->objectType.compare("way on")){
+                            if(mouseInRegion((*it)->region))
+                            destination=((WayOn*)*it)->destination;
+                        }
+                    }
+                    currentRoom=destination;
                 }
-                currentRoom=destination;
+                
             }
         }
                 elapsed = clock.getElapsedTime();
@@ -85,8 +113,10 @@ if(inCombat){
     window.draw(goblin.sprite);
     window.draw(msg.text);
 }
-else window.draw(currentRoom->sprite);
+else window.draw(currentRoom->getSprite(currentDirection));
 window.draw(sidebarSprite);
+window.draw(compass);
+window.draw(needle);
 if(inCombat&&goblin.sta<=0)window.draw(blood);
 
         window.display();
