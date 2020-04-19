@@ -71,6 +71,7 @@ struct Room{
     string name;
     bool dangerous=true;
     View *north, *east, *south, *west;
+    Monster *resident=NULL;
     View* getView(string direction){
         if(direction=="north")return north;
         if(direction=="east") return east;
@@ -125,10 +126,10 @@ void setupRooms(){
     store.west->clickables.push_back(new Chest(10));
     bossRoom.east->clickables.push_back(new Lever("pit trap"));
     pit.east->clickables.push_back(new WayOn(&sewer, "east"));
+    sewer.resident=new Rat();
 }
 
 
-sf::Font font;
 
 
 

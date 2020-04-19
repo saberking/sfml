@@ -69,5 +69,8 @@ struct Goblin:public Monster{
 
     }
 };
+struct Rat:public Monster{
+    Rat():Monster("rat", 0){}
+};
 Being p1("ch1"), p2("ch2"), p3("ch3"), p4("ch4");
 Being chars[4]={p1,p2,p3,p4};

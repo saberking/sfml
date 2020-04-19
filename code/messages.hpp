@@ -1,3 +1,14 @@
+#include <stdlib.h>
+#include<list>
+#include<vector>
+#include<string>
+#include <deque>
+#include <SFML/Graphics.hpp>
+#include <conio.h>
+#include <stdio.h>
+using namespace std;
+sf::Font font;
+
 struct StatementBox{
     string statements[7];
     int noOfLines;

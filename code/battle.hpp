@@ -1,3 +1,12 @@
+#include <stdlib.h>
+#include<list>
+#include<vector>
+#include<string>
+#include <deque>
+#include <SFML/Graphics.hpp>
+#include <conio.h>
+#include <stdio.h>
+
 struct Battle{
     list<Being *> combatants;
     list<Being *>::iterator current;
@@ -10,19 +19,17 @@ struct Battle{
         for(vector<Being*>::iterator it=monsters.begin();it!=monsters.end();it++){
             delete (*it);
         }
+        currentRoom->resident=NULL;
     }
-    int peaceTimer;
-    void start(){
-        Goblin *gob=new Goblin();
+    void start(Monster *mon){
         monsters.clear();
-        monsters.push_back(gob);
+        monsters.push_back(mon);
         inCombat=true;
-        peaceTimer=5;
         combatants.clear();
         for(int i=0;i<4;i++){
             if(chars[i].sta>0)combatants.push_back(&chars[i]);
         }
-        combatants.push_back(gob);
+        combatants.push_back(mon);
         current=combatants.end();
     };
     vector<Being*> getEnemies(){
@@ -104,10 +111,9 @@ struct Battle{
             }
 
         }else {
-            msg.addStatement("You have defeated the goblin!");
-            peaceTimer--;
+            msg.addStatement("You have defeated the enemies!");
+            end();
         }
-            if(peaceTimer<=0)end();
  
     };
     int attackRoll(Being &a, Being &d){

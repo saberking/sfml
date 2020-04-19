@@ -92,13 +92,17 @@ void needleDirection(string direction){
 
 }
 void camp(){
+    if(rand()%2){
     for(int i=0;i<4;i++){
         chars[i].standing=false;
     }
-    battle.start();/*
+    battle.start(new Goblin());
+    }else
+
     for(int i=0;i<4;i++){
         chars[i].sta=chars[i].cVit*5;
-    }*/
+        chars[i].standing=true;
+    }
 }
 void turnLeft(){
     if(currentDirection=="north")currentDirection="foo";
@@ -188,7 +192,7 @@ int main(){
     sf::Event event;
 
     window.setFramerateLimit(20);
-    battle.start();
+    battle.start(new Goblin());
     while (window.isOpen())
     {
 
@@ -201,6 +205,9 @@ int main(){
                 if(event.mouseButton.button==sf::Mouse::Button::Left)leftClick(pos);
                 else rightClick(pos);
             }
+        }
+        if(!inCombat&&currentRoom->resident!=NULL){
+            battle.start(currentRoom->resident);
         }
                 elapsed = clock.getElapsedTime();
         if(elapsed.asSeconds()>0.1){
