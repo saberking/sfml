@@ -96,6 +96,19 @@ void camp(){
         chars[i].sta=chars[i].cVit*5;
     }*/
 }
+void turnLeft(){
+    if(currentDirection=="north")currentDirection="foo";
+        if(currentDirection=="east")currentDirection="north";
+    if(currentDirection=="south")currentDirection="east";
+    if(currentDirection=="west")currentDirection="south";
+    if(currentDirection=="foo")currentDirection="west";
+
+}
+void turnRight(){
+    turnLeft();
+    turnLeft();
+    turnLeft();
+}
 int main(){
     setupRooms();
     setup();
@@ -116,6 +129,7 @@ int main(){
                 window.close();
             if(event.type==sf::Event::MouseButtonPressed&&!inCombat){
                 sf::Vector2i pos=sf::Mouse::getPosition(window);
+
                 if(pos.x>1060&&pos.y>560){
                     if(pos.y-620>pos.x-1120){
                         if(pos.y-620<1120-pos.x){
@@ -132,7 +146,8 @@ int main(){
                     }
                 }else if (pos.x>1060&&pos.y>310&&pos.y<430){
                     camp();
-                }
+                }else if (pos.x>1140)turnRight();
+                else if (pos.x<60)turnLeft();
                 else{
                     Room *destination=currentRoom;
                     string newDirection=currentDirection;
@@ -165,7 +180,6 @@ int main(){
         }
                 elapsed = clock.getElapsedTime();
         if(elapsed.asSeconds()>0.1){
-            printf("t");
             clock.restart();
             if(msg.queue.empty()){
                 if(inCombat)battle.nextCharacter();
