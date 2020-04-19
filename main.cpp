@@ -41,9 +41,9 @@ needle.setOrigin(59,59);
 }
 
 
-bool mouseInRegion(Region const &region){
+bool mouseInRegion(Region *region){
     sf::Vector2i pos=sf::Mouse::getPosition(window);
-    return pos.x>=region.left && pos.x<=region.right&&pos.y>=region.top&&pos.y<=region.bottom;
+    return pos.x>=region->left && pos.x<=region->right&&pos.y>=region->top&&pos.y<=region->bottom;
 }
 void setDirection(string direction){
     if(currentRoom->hasView(direction))
@@ -97,11 +97,12 @@ int main(){
                     string newDirection=currentDirection;
                     for(vector<Clickable*>::iterator it=currentRoom->getView(currentDirection)->clickables.begin();
                         it!=currentRoom->getView(currentDirection)->clickables.end();it++){
-                        printf((*it)->objectType.c_str());
                         if(!(*it)->objectType.compare("way on")){
-                            if(mouseInRegion((*it)->region))
-                            destination=((WayOn*)*it)->destination;
-                            newDirection=((WayOn*)*it)->entryDirection;
+                            if(mouseInRegion((*it)->region)){
+                                destination=((WayOn*)*it)->destination;
+                                newDirection=((WayOn*)*it)->entryDirection;
+                            }
+
                         }
                     }
                     currentRoom=destination;
@@ -117,15 +118,17 @@ int main(){
                 if(inCombat)battle.nextCharacter();
             }else msg.print();
             if(!hostility)peacetimer--;
-            if(peacetimer<=0)inCombat=false;
+            if(peacetimer<=0)battle.end();
         }
 
         window.clear();
+        window.draw(currentRoom->getView(currentDirection)->sprite);
+
 if(inCombat){
     window.draw(goblin.sprite);
-    window.draw(msg.text);
 }
-else window.draw(currentRoom->getView(currentDirection)->sprite);
+    window.draw(msg.text);
+
 window.draw(sidebarSprite);
 window.draw(compass);
 needleDirection(currentDirection);

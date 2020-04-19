@@ -31,21 +31,29 @@ struct Region{
     }
 };
 struct Region fs;
-struct Region left(0, 699, 0, 599);
-Region right(0, 699, 600, 1199);
+struct Region lft(0, 699, 0, 599);
+Region chestRegion(360,610,400,800);
+Region rgt(0, 699, 600, 1199);
 struct Room;
 struct Clickable{
-    Region region;
+    Region *region;
     string objectType;
-    Clickable(string _type):objectType{_type}{
-        region=fs;
-        printf("Foo");
+    Clickable(string _type, Region *reg=&fs):objectType{_type}{
+        region=reg;
     }
 };
 struct WayOn:public Clickable{
     Room *destination;
     string entryDirection="north";
-    WayOn():Clickable("way on"){};
+    WayOn(Room *dest, string dir="north", Region *reg=&fs):Clickable("way on", reg){
+        destination=dest;
+        entryDirection=dir;
+
+    }
+};
+struct Chest:public Clickable{
+    int gold;
+    Chest(int g):Clickable("chest", &chestRegion){gold=g;};
 };
 struct View{
     sf::Sprite sprite;
@@ -56,11 +64,10 @@ struct View{
         sprite.setTexture(texture);
     };
     View(){
-                texture.loadFromFile("rooms/cellEast.png");
+                texture.loadFromFile("rooms/wall.png");
         sprite.setTexture(texture);
     }
 };
-WayOn cellArch, passageSouth;
 struct Room{
     string name;
     View *north, *east, *south, *west;
@@ -70,9 +77,10 @@ struct Room{
         if(direction=="south")return south;
         return west;
     }
-    Room(string _name, string views="n"){
+    Room(string _name, string views=""){
         name=_name;
-        north=new View(name+"North");
+        if(views.find("n")!=string::npos)north=new View(name+"North");
+        else north = new View();
         if(views.find("e")!=string::npos)east=new View(name+"East");
         else east=new View();
                 if(views.find("s")!=string::npos)south=new View(name+"South");
@@ -97,16 +105,19 @@ struct Room{
     }
 
 };
-struct Room cell("cell", "e");
-struct Room passage("passage", "s");
+struct Room cell("cell", "n");
+struct Room passage("passage", "ns");
+struct Room store("store", "we");
+Room bossRoom("bossRoom", "nesw");
 struct Room *currentRoom;
 void setupRooms(){
     currentRoom=&cell;
-    cellArch.destination=&passage;
-    cell.north->clickables.push_back(&cellArch);
-    passageSouth.destination=&cell;
-    passageSouth.entryDirection="south";
-    passage.south->clickables.push_back(&passageSouth);
+    cell.north->clickables.push_back(new WayOn(&passage));
+    passage.south->clickables.push_back(new WayOn(&cell, "south") );
+    passage.north->clickables.push_back(new WayOn(&store, "west", &lft));
+    passage.north->clickables.push_back(new WayOn(&bossRoom, "east", &rgt));
+    store.east->clickables.push_back(new WayOn(&passage, "east"));
+    bossRoom.west->clickables.push_back(new WayOn(&passage, "west"));
 }
 struct Being {
     int Str;
@@ -182,6 +193,18 @@ struct StatementBox{
     void addStatement(string statement){
         queue.push_back(statement);
     };
+    void clear(){
+noOfLines=0;
+                    update();
+
+    };
+    void update(){
+                string longStatement="";
+        for(int i=0;i<noOfLines;i++){
+            longStatement+=statements[i]+"\n";
+        }
+        text.setString(longStatement);
+    }
     void print(){
         if(noOfLines==7){
             for(int i=0;i<6;i++){
@@ -192,11 +215,7 @@ struct StatementBox{
             statements[noOfLines++].assign(queue.front());
         }
         queue.pop_front();
-        string longStatement="";
-        for(int i=0;i<7;i++){
-            longStatement+=statements[i]+"\n";
-        }
-        text.setString(longStatement);
+        update();
     };
     sf::Text text;
 };
@@ -205,6 +224,7 @@ struct StatementBox{
 struct Battle{
     list<Being *> combatants;
     list<Being *>::iterator current;
+    void end(){inCombat=false; msg.clear();}
     Battle(){
         for(int i=0;i<4;i++){
             combatants.push_back(&chars[i]);
