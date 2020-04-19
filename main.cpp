@@ -8,8 +8,8 @@ sf::RenderWindow window(sf::VideoMode(1200, 700), "Gob");
 
 
 
-sf::Sprite blood, sidebarSprite, compass, needle, bag;
-sf::Texture bloodt, compasst, needlet, bagt;
+sf::Sprite blood, sidebarSprite, compass, needle, bag, tent;
+sf::Texture bloodt, compasst, needlet, bagt, tentt;
 sf::RenderTexture sidebar;
 sf::Text goldText;
 string currentDirection="north";
@@ -18,6 +18,7 @@ void redrawSidebar(){
     sidebar.draw(bag);
     goldText.setString(to_string(gold));
     sidebar.draw(goldText);
+    sidebar.draw(tent);
     for(int i = 0;i<4;i++){
         if(chars[i].sta>0)sidebar.draw(chars[i].sprite);
     }
@@ -63,6 +64,9 @@ needle.setOrigin(59,59);
         // set the text style
         goldText.setStyle(sf::Text::Bold );
         goldText.setPosition(sf::Vector2f(210.f, 490.f));
+        tentt.loadFromFile("other/tent.png");
+        tent.setTexture(tentt);
+        tent.setPosition(sf::Vector2f(170.f,310.f));
 
 }
 
@@ -83,6 +87,15 @@ void needleDirection(string direction){
 
 
 }
+void camp(){
+    for(int i=0;i<4;i++){
+        chars[i].standing=false;
+    }
+    battle.start();/*
+    for(int i=0;i<4;i++){
+        chars[i].sta=chars[i].cVit*5;
+    }*/
+}
 int main(){
     setupRooms();
     setup();
@@ -93,8 +106,7 @@ int main(){
     sf::Event event;
 
     window.setFramerateLimit(20);
-    Battle battle;
-    int peacetimer=5;
+    battle.start();
     while (window.isOpen())
     {
 
@@ -118,7 +130,10 @@ int main(){
                             setDirection("east");
                         }
                     }
-                }else{
+                }else if (pos.x>1060&&pos.y>310&&pos.y<430){
+                    camp();
+                }
+                else{
                     Room *destination=currentRoom;
                     string newDirection=currentDirection;
                     for(vector<Clickable*>::iterator it=currentRoom->getView(currentDirection)->clickables.begin();
@@ -151,15 +166,14 @@ int main(){
             if(msg.queue.empty()){
                 if(inCombat)battle.nextCharacter();
             }else msg.print();
-            if(!hostility)peacetimer--;
-            if(peacetimer<=0&&inCombat)battle.end();
+
         }
 
         window.clear();
         window.draw(currentRoom->getView(currentDirection)->sprite);
 
-if(inCombat){
-    window.draw(goblin.sprite);
+if(inCombat&&battle.getEnemies().size()){
+    window.draw(battle.getEnemies().front()->sprite);
 }
     window.draw(*msg.getText());
 redrawSidebar();
@@ -167,7 +181,7 @@ window.draw(sidebarSprite);
 window.draw(compass);
 needleDirection(currentDirection);
 window.draw(needle);
-if(inCombat&&goblin.sta<=0)window.draw(blood);
+if(inCombat&&!battle.getEnemies().size())window.draw(blood);
 
         window.display();
     }

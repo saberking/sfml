@@ -71,6 +71,7 @@ struct View{
 };
 struct Room{
     string name;
+    bool dangerous=true;
     View *north, *east, *south, *west;
     View* getView(string direction){
         if(direction=="north")return north;
@@ -161,6 +162,7 @@ struct Being {
         texture.loadFromFile("pics/"+name+".png");
         sprite.setTexture(texture);
     }
+    ~Being(){}
 };
 struct Monster:public Being{
     int gold;
@@ -168,8 +170,12 @@ struct Monster:public Being{
         gold=g;
     }
 };
+struct Goblin:public Monster{
+    Goblin():Monster("gob", 10){
+
+    }
+};
 Being p1("ch1"), p2("ch2"), p3("ch3"), p4("ch4");
-Monster goblin("gob", 10);
 Being chars[4]={p1,p2,p3,p4};
 
 sf::Font font;
@@ -254,30 +260,54 @@ void addGold(int g){
 struct Battle{
     list<Being *> combatants;
     list<Being *>::iterator current;
-    void end(){inCombat=false;
-    }
-    Battle(){
-        for(int i=0;i<4;i++){
-            combatants.push_back(&chars[i]);
+    vector<Being *> monsters;
+    void end(){
+        inCombat=false;
+        for(list<Being*>::iterator it=combatants.begin();it!=combatants.end();it++){
+            (*it)->standing=true;
         }
-        combatants.push_back(&goblin);
+        for(vector<Being*>::iterator it=monsters.begin();it!=monsters.end();it++){
+            delete (*it);
+        }
+    }
+    int peaceTimer;
+    void start(){
+        Goblin *gob=new Goblin();
+        monsters.push_back(gob);
+        inCombat=true;
+        peaceTimer=5;
+        for(int i=0;i<4;i++){
+            if(chars[i].sta>0)combatants.push_back(&chars[i]);
+        }
+        combatants.push_back(gob);
         current=combatants.end();
     };
+    vector<Being*> getEnemies(){
+        vector<Being*> vec;
+                for (list<Being*>::iterator it=combatants.begin();it!=combatants.end();it++){
+            if((*it)->hostile)vec.push_back(*it);
+        }
+        return vec;
+    }
+    vector<Being*>getFriends(){
+                vector<Being*> vec;
 
+                for (list<Being*>::iterator it=combatants.begin();it!=combatants.end();it++){
+            if(!(*it)->hostile)vec.push_back(*it);
+        }
+        return vec;
+    }
     void nextCharacter(){
         if(current==combatants.end()||++current==combatants.end()){
             current=combatants.begin();
         }   
-        vector<Being*>friends;
-        vector<Being*>enemies;
+        vector<Being*>friends=getFriends();
+        vector<Being*>enemies=getEnemies();
         Being *defender;
-        for (list<Being*>::iterator it=combatants.begin();it!=combatants.end();it++){
-            if((*it)->hostile)enemies.push_back(*it);
-            else friends.push_back(*it);
-        }
+
         if(enemies.size()){
             if(!(*current)->hostile){
-                defender=&goblin;
+                defender=enemies[0];
             }else{
                 defender=friends.at(rand()%friends.size());
             }
@@ -334,6 +364,8 @@ struct Battle{
             msg.addStatement("You have defeated the goblin!");
             hostility=false;
         }
+                    if(!hostility)peaceTimer--;
+            if(peaceTimer<=0)end();
  
     };
     int attackRoll(Being &a, Being &d){
@@ -349,3 +381,4 @@ struct Battle{
         return bal;
     }
 };
+    Battle battle;
