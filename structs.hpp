@@ -9,6 +9,7 @@
 
 using namespace std;
 bool inCombat=true, hostility=true;
+int gold=0;
 struct Item {
     string name;
     string type;
@@ -105,6 +106,7 @@ struct Room{
     }
 
 };
+
 struct Room cell("cell", "n");
 struct Room passage("passage", "ns");
 struct Room store("store", "we");
@@ -118,6 +120,7 @@ void setupRooms(){
     passage.north->clickables.push_back(new WayOn(&bossRoom, "east", &rgt));
     store.east->clickables.push_back(new WayOn(&passage, "east"));
     bossRoom.west->clickables.push_back(new WayOn(&passage, "west"));
+    store.west->clickables.push_back(new Chest(10));
 }
 struct Being {
     int Str;
@@ -159,7 +162,14 @@ struct Being {
         sprite.setTexture(texture);
     }
 };
-Being p1("ch1"), p2("ch2"), p3("ch3"), p4("ch4"), goblin("gob", true);
+struct Monster:public Being{
+    int gold;
+    Monster(string _name, int g):Being(_name, true){
+        gold=g;
+    }
+};
+Being p1("ch1"), p2("ch2"), p3("ch3"), p4("ch4");
+Monster goblin("gob", 10);
 Being chars[4]={p1,p2,p3,p4};
 
 sf::Font font;
@@ -171,8 +181,9 @@ struct StatementBox{
     StatementBox(){
         for(int i =0;i<7;i++){
             statements[i].assign("");
-            noOfLines=0;
         }
+                    noOfLines=0;
+
         // select the font
         text.setFont(font); // font is a sf::Font
 
@@ -204,7 +215,20 @@ noOfLines=0;
             longStatement+=statements[i]+"\n";
         }
         text.setString(longStatement);
+        printf("statement: %s", longStatement.c_str());
+
     }
+            sf::Clock clock;
+    sf::Time elapsed;
+    sf::Text *getText(){
+                elapsed=clock.getElapsedTime();
+        if(elapsed.asSeconds()>3){
+            clock.restart();
+            clear();
+        }
+                    return &text;
+
+    };
     void print(){
         if(noOfLines==7){
             for(int i=0;i<6;i++){
@@ -214,17 +238,24 @@ noOfLines=0;
         }else{
             statements[noOfLines++].assign(queue.front());
         }
+        printf(statements[0].c_str());
+        clock.restart();
         queue.pop_front();
         update();
     };
     sf::Text text;
+
 };
     StatementBox msg;
-
+void addGold(int g){
+    gold+=g;
+    msg.addStatement("You got "+to_string(g)+" gold!");
+}
 struct Battle{
     list<Being *> combatants;
     list<Being *>::iterator current;
-    void end(){inCombat=false; msg.clear();}
+    void end(){inCombat=false;
+    }
     Battle(){
         for(int i=0;i<4;i++){
             combatants.push_back(&chars[i]);
@@ -267,6 +298,10 @@ struct Battle{
                             msg.addStatement(message);
                             if((*current)->sta<=0){
                                 msg.addStatement((*current)->name+" falls unconscious!");
+                                if((*current)->hostile){
+                                    Monster *m=(Monster*)(*current);
+                                    addGold(m->gold);
+                                }
                                 Being *toDelete=*current;
                                 if(current==combatants.begin()){
                                     current=--combatants.end();
@@ -282,6 +317,10 @@ struct Battle{
                     msg.addStatement(message);
                     if(defender->sta<=0){
                         msg.addStatement(defender->name+ " falls unconscious!");
+                        if(defender->hostile){
+                                                                Monster *m=(Monster*)(defender);
+                                    addGold(m->gold);
+                        }
                         combatants.remove(defender);
                     }
                     else if(defender->sta<defender->cVit*2.5) msg.addStatement(defender-> name+ " is winded.");

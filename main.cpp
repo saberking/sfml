@@ -8,15 +8,20 @@ sf::RenderWindow window(sf::VideoMode(1200, 700), "Gob");
 
 
 
-sf::Sprite blood, sidebarSprite, compass, needle;
-sf::Texture bloodt, compasst, needlet;
+sf::Sprite blood, sidebarSprite, compass, needle, bag;
+sf::Texture bloodt, compasst, needlet, bagt;
 sf::RenderTexture sidebar;
+sf::Text goldText;
 string currentDirection="north";
 void redrawSidebar(){
     sidebar.clear( sf::Color(0, 0, 0, 0));
+    sidebar.draw(bag);
+    goldText.setString(to_string(gold));
+    sidebar.draw(goldText);
     for(int i = 0;i<4;i++){
         if(chars[i].sta>0)sidebar.draw(chars[i].sprite);
     }
+
     sidebar.display();
 sidebarSprite.setTexture(sidebar.getTexture());
 sidebarSprite.setPosition(900.f,0.f);
@@ -42,6 +47,22 @@ needle.setTexture(needlet);
 needle.setPosition(1119,619);
 needle.setOrigin(59,59);
         sidebar.create(1200,700);
+        bagt.loadFromFile("other/bag.png");
+        bag.setTexture(bagt);
+        bag.setPosition(sf::Vector2f(170.f,430.f));
+               goldText.setFont(font); // font is a sf::Font
+
+        // set the string to display
+
+        // set the character size
+        goldText.setCharacterSize(36); // in pixels, not points!
+
+        // set the color
+        goldText.setFillColor(sf::Color::Yellow);
+
+        // set the text style
+        goldText.setStyle(sf::Text::Bold );
+        goldText.setPosition(sf::Vector2f(210.f, 490.f));
 
 }
 
@@ -102,13 +123,20 @@ int main(){
                     string newDirection=currentDirection;
                     for(vector<Clickable*>::iterator it=currentRoom->getView(currentDirection)->clickables.begin();
                         it!=currentRoom->getView(currentDirection)->clickables.end();it++){
-                        if(!(*it)->objectType.compare("way on")){
                             if(mouseInRegion((*it)->region)){
-                                destination=((WayOn*)*it)->destination;
-                                newDirection=((WayOn*)*it)->entryDirection;
+                                if(!(*it)->objectType.compare("way on")){
+                                    destination=((WayOn*)*it)->destination;
+                                    newDirection=((WayOn*)*it)->entryDirection;
+
+                                }
+                                if(!(*it)->objectType.compare("chest")){
+                                    msg.addStatement("You got "+to_string(((Chest*)(*it))->gold)+" gold!");
+                                                                        gold+=((Chest*)(*it))->gold;
+
+                                    ((Chest*)(*it))->gold=0;
+                                }
                             }
 
-                        }
                     }
                     currentRoom=destination;
                     currentDirection=newDirection;
@@ -118,12 +146,13 @@ int main(){
         }
                 elapsed = clock.getElapsedTime();
         if(elapsed.asSeconds()>0.1){
+            printf("t");
             clock.restart();
             if(msg.queue.empty()){
                 if(inCombat)battle.nextCharacter();
             }else msg.print();
             if(!hostility)peacetimer--;
-            if(peacetimer<=0)battle.end();
+            if(peacetimer<=0&&inCombat)battle.end();
         }
 
         window.clear();
@@ -132,7 +161,7 @@ int main(){
 if(inCombat){
     window.draw(goblin.sprite);
 }
-    window.draw(msg.text);
+    window.draw(*msg.getText());
 redrawSidebar();
 window.draw(sidebarSprite);
 window.draw(compass);
