@@ -17,6 +17,9 @@ struct Region{
     int bottom;
     int left;
     int right;
+    sf::Vector2f centre(){
+        return sf::Vector2f((left+right)/2,(top+bottom)/2);
+    };
     Region(int _top=0, int _bottom=699,int _left=0, int _right=1199){
         top=_top;
         bottom=_bottom;
@@ -115,8 +118,8 @@ struct Room{
 
 };
 
-struct Room cell(new Region(14,17,5,9),"cell", "n");
-struct Room passage(new Region(11,14, 3, 7),"passage", "ns");
+struct Room cell(new Region(14,17,5,8),"cell", "n");
+struct Room passage(new Region(11,14, 3, 7),"passage", "nsew");
 struct Room store(new Region(8,13,1,4),"store", "we");
 struct Room sewer(new Region(8,13,12,16),"sewer", "nesw");
 Room bossRoom(new Region(8,13,7,11),"bossRoom", "nesw");
@@ -133,6 +136,10 @@ void setupRooms(){
     passage.south->clickables.push_back(new WayOn(&cell, "south") );
     passage.north->clickables.push_back(new WayOn(&store, "west", &lft));
     passage.north->clickables.push_back(new WayOn(&bossRoom, "east", &rgt));
+    passage.east->clickables.push_back(new WayOn(&bossRoom, "east", &lft));
+    passage.east->clickables.push_back(new WayOn(&cell, "south", &rgt));
+    passage.west->clickables.push_back(new WayOn(&store,"west",&rgt));
+    passage.west->clickables.push_back(new WayOn(&cell, "south", &lft));
     store.east->clickables.push_back(new WayOn(&passage, "east"));
     bossRoom.west->clickables.push_back(new WayOn(&passage, "west"));
     store.west->clickables.push_back(new Chest(10));

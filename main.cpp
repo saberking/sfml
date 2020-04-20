@@ -11,7 +11,7 @@ sf::RenderWindow window(sf::VideoMode(1200, 700), "Gob");
 
 float turnLength=0.5;
 
-sf::Sprite minimap,blood, sidebarSprite, compass, needle, bag, tent;
+sf::Sprite minimap,blood, sidebarSprite, compass, needle, bag, tent,needle2;
 sf::Texture minimapt,bloodt, compasst, needlet, bagt, tentt;
 sf::RenderTexture sidebar;
 sf::RenderTexture monsters;
@@ -52,7 +52,10 @@ compass.setPosition(1060,560);
 needlet.loadFromFile("other/needle.png");
 needle.setTexture(needlet);
 needle.setPosition(1119,619);
-needle.setOrigin(59,59);
+needle.setOrigin(59.f,59.f);
+needle2.setTexture(needlet);
+needle2.setScale(sf::Vector2f(0.5f,0.5f));
+needle2.setOrigin(59.f,59.f);
         sidebar.create(1200,700);
         bagt.loadFromFile("other/bag.png");
         bag.setTexture(bagt);
@@ -87,11 +90,11 @@ void setDirection(string direction){
     if(currentRoom->hasView(direction))
     currentDirection=direction;
 }
-void needleDirection(string direction){
-    if(direction=="north")needle.setRotation(0);
-        if(direction=="east")needle.setRotation(90);
-            if(direction=="south")needle.setRotation(180);
-    if(direction=="west")needle.setRotation(270);
+void needleDirection(string direction, sf::Sprite &n){
+    if(direction=="north")n.setRotation(0);
+        if(direction=="east")n.setRotation(90);
+            if(direction=="south")n.setRotation(180);
+    if(direction=="west")n.setRotation(270);
 
 
 }
@@ -249,10 +252,18 @@ if(battle.inCombat){
 redrawSidebar();
 window.draw(sidebarSprite);
 window.draw(compass);
-needleDirection(currentDirection);
+needleDirection(currentDirection,needle);
 window.draw(needle);
 if(battle.inCombat&&!battle.getEnemies().size())window.draw(blood);
-if(mapp.visible)window.draw(mapp.getSprite());
+if(mapp.visible){
+    window.draw(mapp.getSprite());
+    sf::Vector2f centre=currentRoom->mapRegion.centre();
+    centre.x*=40;centre.x+=40;
+    centre.y*=40;centre.y+=40;
+    needle2.setPosition(centre);
+    needleDirection(currentDirection,needle2);
+    window.draw(needle2);
+}
         window.display();
     }
 
