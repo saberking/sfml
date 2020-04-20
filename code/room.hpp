@@ -1,3 +1,5 @@
+#ifndef room
+#define room
 #include <stdlib.h>
 #include<list>
 #include<vector>
@@ -9,7 +11,6 @@
 #include "being.hpp"
 
 using namespace std;
-bool inCombat=true;
 
 struct Region{
     int top;
@@ -77,13 +78,15 @@ struct Room{
     bool dangerous=true;
     View *north, *east, *south, *west;
     Monster *resident=NULL;
+    Region mapRegion;
     View* getView(string direction){
         if(direction=="north")return north;
         if(direction=="east") return east;
         if(direction=="south")return south;
         return west;
     }
-    Room(string _name, string views=""){
+    Room(Region *mr, string _name, string views=""){
+        mapRegion=*mr;
         name=_name;
         if(views.find("n")!=string::npos)north=new View(name+"North");
         else north = new View();
@@ -112,16 +115,16 @@ struct Room{
 
 };
 
-struct Room cell("cell", "n");
-struct Room passage("passage", "ns");
-struct Room store("store", "we");
-struct Room sewer("sewer", "nesw");
-Room bossRoom("bossRoom", "nesw");
-Room pit("pit","e");
-Room river("river","nesw");
-Room changingRoom("changingRoom","ns");
-Room choke("choke","ew");
-Room cave("cave","nsew");
+struct Room cell(new Region(14,17,5,9),"cell", "n");
+struct Room passage(new Region(11,14, 3, 7),"passage", "ns");
+struct Room store(new Region(8,13,1,4),"store", "we");
+struct Room sewer(new Region(8,13,12,16),"sewer", "nesw");
+Room bossRoom(new Region(8,13,7,11),"bossRoom", "nesw");
+Room pit(new Region(8,13,7,12),"pit","e");
+Room river(new Region(5,8,14,16),"river","nesw");
+Room changingRoom(new Region(12,16,13,16),"changingRoom","ns");
+Room choke(new Region(5,8,12,14),"choke","ew");
+Room cave(new Region(4,10,17,23),"cave","nsew");
 struct Room *currentRoom;
 
 void setupRooms(){
@@ -148,7 +151,7 @@ void setupRooms(){
     cave.resident=new Crab();
 }
 
-
+#endif
 
 
 

@@ -1,3 +1,6 @@
+#ifndef being
+
+
 #include <stdlib.h>
 #include<list>
 #include<vector>
@@ -83,3 +86,5 @@ struct Crab:Monster{
 };
 Being p1("ch1"), p2("ch2"), p3("ch3"), p4("ch4");
 Being chars[4]={p1,p2,p3,p4};
+#define being
+#endif

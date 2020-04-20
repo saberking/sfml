@@ -3,16 +3,16 @@
 #include<list>
 #include<deque>
 
-#include "code/room.hpp"
 #include "code/messages.hpp"
 #include "code/battle.hpp"
+#include "code/map.hpp"
 
 sf::RenderWindow window(sf::VideoMode(1200, 700), "Gob");
 
 float turnLength=0.5;
 
-sf::Sprite blood, sidebarSprite, compass, needle, bag, tent;
-sf::Texture bloodt, compasst, needlet, bagt, tentt;
+sf::Sprite minimap,blood, sidebarSprite, compass, needle, bag, tent;
+sf::Texture minimapt,bloodt, compasst, needlet, bagt, tentt;
 sf::RenderTexture sidebar;
 sf::RenderTexture monsters;
 sf::Text goldText;
@@ -23,6 +23,7 @@ void redrawSidebar(){
     goldText.setString(to_string(gold));
     sidebar.draw(goldText);
     sidebar.draw(tent);
+    sidebar.draw(minimap);
     for(int i = 0;i<4;i++){
         if(chars[i].sta>0)sidebar.draw(chars[i].sprite);
     }
@@ -32,6 +33,7 @@ sidebarSprite.setTexture(sidebar.getTexture());
 sidebarSprite.setPosition(900.f,0.f);
 }
 void setup(){
+    mapp.reveal(&cell);
 
     srand(time(NULL));
         font.loadFromFile("fonts/thestrong.ttf");
@@ -71,7 +73,9 @@ needle.setOrigin(59,59);
         tentt.loadFromFile("other/tent.png");
         tent.setTexture(tentt);
         tent.setPosition(sf::Vector2f(170.f,310.f));
-
+    minimapt.loadFromFile("other/minimap.png");
+    minimap.setTexture(minimapt);
+    minimap.setPosition(sf::Vector2f(170.f,190.f));
 }
 
 
@@ -125,6 +129,10 @@ Clickable* getClickTarget(sf::Vector2i pos){
         return NULL;
 }
 void leftClick(sf::Vector2i pos){
+    if(mapp.visible){
+        mapp.visible=false;
+        return;
+    }
     if(pos.x>1060&&pos.y>560){
         if(pos.y-620>pos.x-1120){
             if(pos.y-620<1120-pos.x){
@@ -141,7 +149,10 @@ void leftClick(sf::Vector2i pos){
         }
     }else if (pos.x>1060&&pos.y>310&&pos.y<430){
         camp();
-    }else if (pos.x>1140)turnRight();
+    }else if(pos.x>1060&&pos.y>190&&pos.y<310){
+        mapp.visible=true;
+    }
+    else if (pos.x>1140)turnRight();
     else if (pos.x<60)turnLeft();
     else{
         Room *destination=currentRoom;
@@ -151,7 +162,6 @@ void leftClick(sf::Vector2i pos){
             if(!target->objectType.compare("way on")){
                 destination=((WayOn*)target)->destination;
                 newDirection=((WayOn*)target)->entryDirection;
-
             }
             if(!target->objectType.compare("chest")){
                 msg.addStatement("You got "+to_string(((Chest*)target)->gold)+" gold!");
@@ -172,7 +182,11 @@ void leftClick(sf::Vector2i pos){
                 river.west->clickables.push_back(new WayOn(&choke, "west"));
             }
         }
+        if(destination!=currentRoom){
+                            mapp.reveal(destination);
         currentRoom=destination;
+
+        }
         currentDirection=newDirection;
     }
     
@@ -207,20 +221,20 @@ int main(){
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-            if(event.type==sf::Event::MouseButtonPressed&&!inCombat){
+            if(event.type==sf::Event::MouseButtonPressed&&!battle.inCombat){
                 sf::Vector2i pos=sf::Mouse::getPosition(window);
                 if(event.mouseButton.button==sf::Mouse::Button::Left)leftClick(pos);
                 else rightClick(pos);
             }
         }
-        if(!inCombat&&currentRoom->resident!=NULL){
+        if(!battle.inCombat&&currentRoom->resident!=NULL){
             battle.start(currentRoom->resident);
         }
                 elapsed = clock.getElapsedTime();
         if(elapsed.asSeconds()>turnLength){
             clock.restart();
             if(msg.queue.empty()){
-                if(inCombat)battle.nextCharacter();
+                if(battle.inCombat)battle.nextCharacter();
             }else msg.print();
 
         }
@@ -228,7 +242,7 @@ int main(){
         window.clear();
         window.draw(currentRoom->getView(currentDirection)->sprite);
 
-if(inCombat){
+if(battle.inCombat){
     window.draw(battle.sprite);
 }
     window.draw(*msg.getText());
@@ -237,8 +251,8 @@ window.draw(sidebarSprite);
 window.draw(compass);
 needleDirection(currentDirection);
 window.draw(needle);
-if(inCombat&&!battle.getEnemies().size())window.draw(blood);
-
+if(battle.inCombat&&!battle.getEnemies().size())window.draw(blood);
+if(mapp.visible)window.draw(mapp.getSprite());
         window.display();
     }
 

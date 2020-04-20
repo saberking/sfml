@@ -50,7 +50,6 @@ noOfLines=0;
             longStatement+=statements[i]+"\n";
         }
         text.setString(longStatement);
-        printf("statement: %s", longStatement.c_str());
 
     }
             sf::Clock clock;

@@ -6,6 +6,8 @@
 #include <SFML/Graphics.hpp>
 #include <conio.h>
 #include <stdio.h>
+#include "being.hpp"
+#include "room.hpp"
 
 struct Battle{
     list<Being *> combatants;
@@ -13,6 +15,7 @@ struct Battle{
     vector<Being *> monsters;
     sf::RenderTexture tex;
     sf::Sprite sprite;
+    bool inCombat;
     void end(){
         inCombat=false;
         for(list<Being*>::iterator it=combatants.begin();it!=combatants.end();it++){
@@ -112,7 +115,6 @@ struct Battle{
         vector<Being*>friends=getFriends();
         vector<Being*>enemies=getEnemies();
         Being *defender;
-        printf("%s's turn!!enemies:%d,frieds:&d,combatants:%d",(*current)->name.c_str(),enemies.size(),friends.size(),combatants.size());
         if(enemies.size()){
             if(!(*current)->hostile){
                 defender=enemies[0];
