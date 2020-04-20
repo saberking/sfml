@@ -18,7 +18,6 @@ float turnLength=0.7;
 
 
 
- sf::RenderTexture monsters;
  sf::Text goldText;
  sf::Sprite minimap,blood, sidebarSprite, compass, needle, bag, tent,needle2;
  sf::Texture minimapt,bloodt, compasst, needlet, bagt, tentt;
@@ -48,8 +47,7 @@ void redrawSidebar(){
     }else{
            
     }
-     sidebar.draw(bag);
-
+        sidebar.draw(bag);
         sidebar.draw(goldText);
         sidebar.draw(tent);
         sidebar.draw(minimap);

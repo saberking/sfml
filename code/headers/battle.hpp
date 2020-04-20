@@ -72,18 +72,18 @@ struct Battle{
         a.sta-=castingCost;
     }
     void ko(void *a){
-                                msg.addStatement(((Being*)a)->name+" falls unconscious!");
-                                if(((Being*)a)->hostile&&((Monster*)a)->gold){
-                                    gold+=(((Monster*)a)->gold);
-                                    msg.addStatement("You got some gold!");
-                                }
-                                Being *toDelete=(Being*)a;
-                                if(a==*current){
-                                    if(current==combatants.begin()){
-                                        current=--combatants.end();
-                                    }else current--;
-                                }
-                                combatants.remove(toDelete);
+        msg.addStatement(((Being*)a)->name+" falls unconscious!");
+        if(((Being*)a)->hostile&&((Monster*)a)->gold){
+            gold+=(((Monster*)a)->gold);
+            msg.addStatement("You got some gold!");
+        }
+        Being *toDelete=(Being*)a;
+        if(a==*current){
+            if(current==combatants.begin()){
+                current=--combatants.end();
+            }else current--;
+        }
+        combatants.remove(toDelete);
     }
     void attack(Being &a, Being &d){
                 string message=a.name+" attacks "+d.name+".";
