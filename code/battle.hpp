@@ -11,6 +11,8 @@ struct Battle{
     list<Being *> combatants;
     list<Being *>::iterator current;
     vector<Being *> monsters;
+    sf::RenderTexture tex;
+    sf::Sprite sprite;
     void end(){
         inCombat=false;
         for(list<Being*>::iterator it=combatants.begin();it!=combatants.end();it++){
@@ -31,6 +33,10 @@ struct Battle{
         }
         combatants.push_back(mon);
         current=combatants.end();
+        tex.clear( sf::Color(0, 0, 0, 0));
+        tex.draw(monsters.front()->sprite);
+        tex.display();
+        sprite.setTexture(tex.getTexture());
     };
     vector<Being*> getEnemies(){
         vector<Being*> vec;
@@ -148,6 +154,10 @@ struct Battle{
         bool bal= rand()%6<a.Dex;
         if(!bal) a.standing=false;
         return bal;
+    }
+    Battle(){
+        tex.create(1200,700);
+
     }
 };
     Battle battle;

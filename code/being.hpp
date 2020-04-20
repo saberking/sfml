@@ -69,6 +69,9 @@ struct Goblin:public Monster{
 
     }
 };
+struct Fish:public Monster{
+    Fish():Monster("fish", 0){}
+};
 struct Rat:public Monster{
     Rat():Monster("rat", 0){}
 };

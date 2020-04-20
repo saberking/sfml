@@ -131,6 +131,8 @@ void setupRooms(){
     sewer.west->clickables.push_back(new WayOn(&pit,"west"));
     sewer.north->clickables.push_back(new WayOn(&river));
     sewer.resident=new Rat();
+    river.resident=new Fish();
+    river.south->clickables.push_back(new WayOn(&sewer, "south"));
 }
 
 

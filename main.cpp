@@ -14,6 +14,7 @@ float turnLength=0.5;
 sf::Sprite blood, sidebarSprite, compass, needle, bag, tent;
 sf::Texture bloodt, compasst, needlet, bagt, tentt;
 sf::RenderTexture sidebar;
+sf::RenderTexture monsters;
 sf::Text goldText;
 string currentDirection="north";
 void redrawSidebar(){
@@ -220,8 +221,8 @@ int main(){
         window.clear();
         window.draw(currentRoom->getView(currentDirection)->sprite);
 
-if(inCombat&&battle.getEnemies().size()){
-    window.draw(battle.getEnemies().front()->sprite);
+if(inCombat){
+    window.draw(battle.sprite);
 }
     window.draw(*msg.getText());
 redrawSidebar();
