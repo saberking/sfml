@@ -1,4 +1,4 @@
-#include "code/room.hpp"
+#include "headers/room.hpp"
 struct Room cell(new Region(14,17,5,8),"cell", "n");
 struct Room passage(new Region(11,14, 3, 7),"passage", "nsew");
 struct Room store(new Region(8,13,1,4),"store", "e");

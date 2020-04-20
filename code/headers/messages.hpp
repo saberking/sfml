@@ -1,5 +1,5 @@
-#ifndef messages
-#define messages
+#ifndef MESSAGES
+#define MESSAGES
 #include <stdlib.h>
 #include<list>
 #include<vector>

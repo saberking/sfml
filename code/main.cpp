@@ -1,12 +1,9 @@
- #include <SFML/Graphics.hpp>
-#include <stdlib.h>
-#include<list>
-#include<deque>
 
-#include "code/messages.hpp"
-#include "code/battle.hpp"
-#include "code/map.hpp"
-#include "code/util.hpp"
+
+#include "headers/messages.hpp"
+#include "headers/battle.hpp"
+#include "headers/map.hpp"
+#include "headers/util.hpp"
 Being p1("ch1"), p2("ch2"), p3("ch3"), p4("ch4");
 Being chars[4]={p1,p2,p3,p4};
 Battle battle;
@@ -75,6 +72,7 @@ sidebarSprite.setPosition(900.f,0.f);
 
 
 void setup(){
+    currentDirection="east";
     battle.createTexture();
     mapp.reveal(&cell);
 

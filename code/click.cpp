@@ -1,12 +1,8 @@
-#include <SFML/Graphics.hpp>
-#include <stdlib.h>
-#include<list>
-#include<deque>
 
-#include "code/messages.hpp"
-#include "code/battle.hpp"
-#include "code/map.hpp"
-#include "code/util.hpp"
+#include "headers/messages.hpp"
+#include "headers/battle.hpp"
+#include "headers/map.hpp"
+#include "headers/util.hpp"
 extern Room cave;
 void camp(){
     if(rand()%2){

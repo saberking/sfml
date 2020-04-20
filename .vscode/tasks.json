@@ -13,7 +13,7 @@
                 "${fileDirname}\\click.cpp",
                 "${fileDirname}\\main.cpp",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "${fileDirname}\\..\\${fileBasenameNoExtension}.exe",
                 "-l:libsfml-graphics.a",
                 "-l:libsfml-window.a",
                 "-l:libsfml-system.a",
