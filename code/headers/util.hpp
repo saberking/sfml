@@ -1,13 +1,6 @@
 #ifndef util
 #define util
-#include <stdlib.h>
-#include<list>
-#include<vector>
-#include<string>
-#include <deque>
-#include <SFML/Graphics.hpp>
-#include <conio.h>
-#include <stdio.h>
+#include "includes.hpp"
 void leftClick(sf::Vector2i pos);
 void rightClick(sf::Vector2i pos);
 void setupRooms();
