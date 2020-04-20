@@ -87,7 +87,8 @@ struct Crab:Monster{
 struct Spider:Monster{
     Spider():Monster("spider", 0){}
 };
-Being p1("ch1"), p2("ch2"), p3("ch3"), p4("ch4");
-Being chars[4]={p1,p2,p3,p4};
+extern Being p1, p2, p3, p4;
+extern Being chars[4];
+
 #define being
 #endif

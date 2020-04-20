@@ -1,3 +1,5 @@
+#ifndef BATTLE
+#define BATTLE
 #include <stdlib.h>
 #include<list>
 #include<vector>
@@ -8,6 +10,7 @@
 #include <stdio.h>
 #include "being.hpp"
 #include "room.hpp"
+#include "messages.hpp"
 
 struct Battle{
     list<Being *> combatants;
@@ -77,8 +80,9 @@ struct Battle{
     }
     void ko(void *a){
                                 msg.addStatement(((Being*)a)->name+" falls unconscious!");
-                                if(((Being*)a)->hostile){
-                                    addGold(((Monster*)a)->gold);
+                                if(((Being*)a)->hostile&&((Monster*)a)->gold){
+                                    gold+=(((Monster*)a)->gold);
+                                    msg.addStatement("You got some gold!");
                                 }
                                 Being *toDelete=(Being*)a;
                                 if(a==*current){
@@ -177,9 +181,9 @@ struct Battle{
         if(!bal) a.standing=false;
         return bal;
     }
-    Battle(){
+    void createTexture(){
         tex.create(1200,700);
 
     }
 };
-    Battle battle;
+#endif

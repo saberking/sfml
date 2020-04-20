@@ -7,13 +7,13 @@
 #include "code/battle.hpp"
 #include "code/map.hpp"
 #include "code/util.hpp"
-
+extern Room cave;
 void camp(){
     if(rand()%2){
-    for(int i=0;i<4;i++){
-        chars[i].standing=false;
-    }
-    battle.start(new Goblin());
+        for(int i=0;i<4;i++){
+            chars[i].standing=false;
+        }
+        battle.start(new Goblin());
     }else
 
     for(int i=0;i<4;i++){

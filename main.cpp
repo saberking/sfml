@@ -1,4 +1,31 @@
-#include"click.cpp"
+ #include <SFML/Graphics.hpp>
+#include <stdlib.h>
+#include<list>
+#include<deque>
+
+#include "code/messages.hpp"
+#include "code/battle.hpp"
+#include "code/map.hpp"
+#include "code/util.hpp"
+Being p1("ch1"), p2("ch2"), p3("ch3"), p4("ch4");
+Being chars[4]={p1,p2,p3,p4};
+Battle battle;
+StatementBox msg;
+Map mapp;
+int gold=0;
+sf::Font font;
+float turnLength=0.7;
+  std::string currentDirection;
+
+ sf::RenderWindow window(sf::VideoMode(1200, 700), "Gob");
+
+
+
+ sf::RenderTexture monsters;
+ sf::Text goldText;
+ sf::Sprite minimap,blood, sidebarSprite, compass, needle, bag, tent,needle2;
+ sf::Texture minimapt,bloodt, compasst, needlet, bagt, tentt;
+ sf::RenderTexture sidebar;
 sf::Sprite fireball, chest;
 sf::Texture fireballt, chestt;
 
@@ -48,6 +75,7 @@ sidebarSprite.setPosition(900.f,0.f);
 
 
 void setup(){
+    battle.createTexture();
     mapp.reveal(&cell);
 
     srand(time(NULL));

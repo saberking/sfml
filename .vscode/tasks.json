@@ -9,6 +9,8 @@
             "command": "C:\\MinGW\\bin\\g++.exe",
             "args": [
                 "-g",
+                "${fileDirname}\\setupRooms.cpp",
+                "${fileDirname}\\click.cpp",
                 "${fileDirname}\\main.cpp",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",

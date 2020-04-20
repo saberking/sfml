@@ -1,3 +1,5 @@
+#ifndef messages
+#define messages
 #include <stdlib.h>
 #include<list>
 #include<vector>
@@ -7,7 +9,7 @@
 #include <conio.h>
 #include <stdio.h>
 using namespace std;
-sf::Font font;
+extern sf::Font font;
 
 struct StatementBox{
     string statements[7];
@@ -79,10 +81,8 @@ noOfLines=0;
     sf::Text text;
 
 };
-int gold=0;
+extern int gold;
 
-    StatementBox msg;
-    void addGold(int g){
-    gold+=g;
-    msg.addStatement("You got "+to_string(g)+" gold!");
-}
+ extern   StatementBox msg;
+
+#endif

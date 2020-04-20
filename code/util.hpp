@@ -1,3 +1,5 @@
+#ifndef util
+#define util
 #include <stdlib.h>
 #include<list>
 #include<vector>
@@ -8,14 +10,17 @@
 #include <stdio.h>
 void leftClick(sf::Vector2i pos);
 void rightClick(sf::Vector2i pos);
-std::string currentDirection="north";
+void setupRooms();
+extern float turnLength;
+
 void needleDirection(std::string direction, sf::Sprite &n);
-sf::RenderWindow window(sf::VideoMode(1200, 700), "Gob");
 
-float turnLength=0.7;
+extern std::string currentDirection;
 
-sf::Sprite minimap,blood, sidebarSprite, compass, needle, bag, tent,needle2;
-sf::Texture minimapt,bloodt, compasst, needlet, bagt, tentt;
-sf::RenderTexture sidebar;
-sf::RenderTexture monsters;
-sf::Text goldText;
+extern sf::RenderWindow window;
+
+
+extern Battle battle;
+extern sf::RenderTexture monsters;
+extern sf::Text goldText;
+#endif

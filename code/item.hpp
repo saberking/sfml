@@ -1,3 +1,5 @@
+#ifndef ITEM
+#define ITEM
 #include <stdlib.h>
 #include<list>
 #include<vector>
@@ -28,3 +30,4 @@ struct Weapon: public Item{
 struct Club:public Weapon{
     Club():Weapon("club",1, 0){}
 };
+#endif

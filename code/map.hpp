@@ -1,4 +1,6 @@
 
+#ifndef map
+#define map
 #include <stdlib.h>
 #include<list>
 #include<vector>
@@ -8,7 +10,6 @@
 #include <conio.h>
 #include <stdio.h>
 #include "room.hpp"
-    sf::RenderTexture texture;
 
 struct Map{
     bool fog[17][30];
@@ -16,6 +17,8 @@ struct Map{
     sf::Texture tex;
     sf::Sprite mapSprite,sprite;
     sf::RectangleShape rect;
+        sf::RenderTexture texture;
+
     Map(){
         rect.setSize(sf::Vector2f(40.f, 40.f));
         rect.setFillColor(sf::Color(0,0,0,255));
@@ -55,4 +58,5 @@ struct Map{
         return sprite;
     }
 };
-Map mapp;
+extern Map mapp;
+#endif
