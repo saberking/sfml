@@ -71,10 +71,6 @@ struct View{
         texture.loadFromFile("rooms/"+name+".png");
         sprite.setTexture(texture);
     };
-    View(){
-                texture.loadFromFile("rooms/wall.png");
-        sprite.setTexture(texture);
-    }
 };
 struct Room{
     string name;
@@ -88,17 +84,17 @@ struct Room{
         if(direction=="south")return south;
         return west;
     }
-    Room(Region *mr, string _name, string views=""){
+    Room(Region *mr, string _name, string views="", string typ="wall"){
         mapRegion=*mr;
         name=_name;
         if(views.find("n")!=string::npos)north=new View(name+"North");
-        else north = new View();
+        else north = new View(typ);
         if(views.find("e")!=string::npos)east=new View(name+"East");
-        else east=new View();
+        else east=new View(typ);
                 if(views.find("s")!=string::npos)south=new View(name+"South");
-                else south=new View();
+                else south=new View(typ);
                         if(views.find("w")!=string::npos)west=new View(name+"West");
-                        else west=new View();
+                        else west=new View(typ);
 
 
     };
@@ -120,7 +116,7 @@ struct Room{
 
 struct Room cell(new Region(14,17,5,8),"cell", "n");
 struct Room passage(new Region(11,14, 3, 7),"passage", "nsew");
-struct Room store(new Region(8,13,1,4),"store", "we");
+struct Room store(new Region(8,13,1,4),"store", "e");
 struct Room sewer(new Region(8,13,12,16),"sewer", "nesw");
 Room bossRoom(new Region(8,13,7,11),"bossRoom", "nesw");
 Room pit(new Region(8,13,7,12),"pit","e");
@@ -129,10 +125,12 @@ Room changingRoom(new Region(12,16,13,16),"changingRoom","ns");
 Room choke(new Region(5,8,12,14),"choke","ew");
 Room cave(new Region(5,8,17,23),"cave","nsew");
 Room cave2p(new Region(5,8,24,25),"cave2p","nesw");
+Room cave3(new Region(2,5, 25,28),"cave3","ns","caveWall");
+Room cave4(new Region(8,11,25,28),"cave4","ns","caveWall");
 struct Room *currentRoom;
 
 void setupRooms(){
-    currentRoom=&cell;
+    currentRoom=&cave;
     cell.north->clickables.push_back(new WayOn(&passage));
     passage.south->clickables.push_back(new WayOn(&cell, "south") );
     passage.north->clickables.push_back(new WayOn(&store, "west", &lft));
@@ -158,8 +156,18 @@ void setupRooms(){
     cave.west->clickables.push_back(new WayOn(&river, "west"));
     cave.east->clickables.push_back(new WayOn(&cave2p,"east",&rgt));
     cave2p.west->clickables.push_back(new WayOn(&cave, "west"));
+    cave2p.east->clickables.push_back(new WayOn(&cave3, "north",&lft));
+    cave2p.east->clickables.push_back(new WayOn(&cave4, "south",&rgt));
+    cave2p.north->clickables.push_back(new WayOn(&cave,"west",&lft));
+    cave2p.north->clickables.push_back(new WayOn(&cave3,"north",&rgt));
+    cave2p.south->clickables.push_back(new WayOn(&cave4,"south",&lft));
+    cave2p.south->clickables.push_back(new WayOn(&cave,"west",&rgt));
+    cave3.south->clickables.push_back(new WayOn(&cave2p, "south"));
+    cave4.north->clickables.push_back(new WayOn(&cave2p, "north"));
+    cave3.north->clickables.push_back(new Chest(10));
+
+    cave2p.resident=new Spider();
     cave.resident=new Crab();
-    // cave2p.east->clickables.push_back(new WayOn())
 }
 
 #endif

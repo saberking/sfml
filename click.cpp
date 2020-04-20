@@ -129,7 +129,7 @@ void rightClick(sf::Vector2i pos){
                 if(target->objectType=="chest"){
                     msg.addStatement("You smash the chest! P1 gets a club!");
                     chars[0].weapon=new Club();
-                    store.west=new View();
+                    currentRoom->getView(currentDirection)->clickables=vector<Clickable*>();
                 }
             }
 

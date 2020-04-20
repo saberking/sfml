@@ -1,6 +1,6 @@
 #include"click.cpp"
-sf::Sprite fireball;
-sf::Texture fireballt;
+sf::Sprite fireball, chest;
+sf::Texture fireballt, chestt;
 
 void redrawSidebar(){
     sidebar.clear( sf::Color(0, 0, 0, 0));
@@ -96,13 +96,26 @@ void setup(){
     minimap.setPosition(sf::Vector2f(170.f,190.f));
     fireballt.loadFromFile("other/fireball.png");
     fireball.setTexture(fireballt);
+    chestt.loadFromFile("objects/chest.png");
+    chest.setTexture(chestt);
+}
+bool isThereAChest(){
+    View* view=currentRoom->getView(currentDirection);
+    for(vector<Clickable*>::iterator it=view->clickables.begin();it!=view->clickables.end();it++){
+        if((*it)->objectType=="chest"){
+            return true;
+        }
+    }
+    return false;
 }
 
 
 void drawWindow(){
             window.clear();
         window.draw(currentRoom->getView(currentDirection)->sprite);
-
+        if(isThereAChest()){
+            window.draw(chest);
+        }
         if(battle.inCombat){
             window.draw(battle.sprite);
 
@@ -140,7 +153,6 @@ int main(){
     sf::Event event;
 
     window.setFramerateLimit(20);
-    battle.start(new Goblin());
     while (window.isOpen())
     {
 
