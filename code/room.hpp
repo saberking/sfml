@@ -127,7 +127,8 @@ Room pit(new Region(8,13,7,12),"pit","e");
 Room river(new Region(5,8,14,16),"river","nesw");
 Room changingRoom(new Region(12,16,13,16),"changingRoom","ns");
 Room choke(new Region(5,8,12,14),"choke","ew");
-Room cave(new Region(4,10,17,23),"cave","nsew");
+Room cave(new Region(5,8,17,23),"cave","nsew");
+Room cave2p(new Region(5,8,24,25),"cave2p","nesw");
 struct Room *currentRoom;
 
 void setupRooms(){
@@ -155,7 +156,10 @@ void setupRooms(){
     river.south->clickables.push_back(new WayOn(&sewer, "south"));
     choke.east->clickables.push_back(new WayOn(&river, "east"));
     cave.west->clickables.push_back(new WayOn(&river, "west"));
+    cave.east->clickables.push_back(new WayOn(&cave2p,"east",&rgt));
+    cave2p.west->clickables.push_back(new WayOn(&cave, "west"));
     cave.resident=new Crab();
+    // cave2p.east->clickables.push_back(new WayOn())
 }
 
 #endif
