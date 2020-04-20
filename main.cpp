@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include<list>
 #include<deque>
-#include "code/being.hpp"
 
-#include "code/structs.hpp"
+#include "code/room.hpp"
 #include "code/messages.hpp"
 #include "code/battle.hpp"
 

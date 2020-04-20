@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 #include <conio.h>
 #include <stdio.h>
+#include "being.hpp"
 
 using namespace std;
 bool inCombat=true;
@@ -113,6 +114,7 @@ struct Room store("store", "we");
 struct Room sewer("sewer", "nesw");
 Room bossRoom("bossRoom", "nesw");
 Room pit("pit","e");
+Room river("river","nesw");
 struct Room *currentRoom;
 
 void setupRooms(){
@@ -126,6 +128,8 @@ void setupRooms(){
     store.west->clickables.push_back(new Chest(10));
     bossRoom.east->clickables.push_back(new Lever("pit trap"));
     pit.east->clickables.push_back(new WayOn(&sewer, "east"));
+    sewer.west->clickables.push_back(new WayOn(&pit,"west"));
+    sewer.north->clickables.push_back(new WayOn(&river));
     sewer.resident=new Rat();
 }
 
