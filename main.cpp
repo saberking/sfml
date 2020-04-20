@@ -163,7 +163,12 @@ void leftClick(sf::Vector2i pos){
                 destination=&pit;
                 msg.addStatement("You fall down a pit trap!");
             }
-
+            if(!target->objectType.compare("locker")){
+                if(((Locker*)target)->full)
+                msg.addStatement("You get 4 wetsuits!");
+                ((Locker*)target)->full=false;
+                //make river passable
+            }
         }
         currentRoom=destination;
         currentDirection=newDirection;
