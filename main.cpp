@@ -39,7 +39,7 @@ void setup(){
         font.loadFromFile("fonts/thestrong.ttf");
 for(int i=0;i<4;i++){
     chars[i].sprite.setPosition(sf::Vector2f(0.f, (float)80+153*i));
-    chars[i].resizeTexture(0.75f,0.75f);
+    chars[i].resizeTexture(0.5f,0.5f);
 }
 bloodt.loadFromFile("blood.png");
 blood.setTexture(bloodt);
