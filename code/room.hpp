@@ -120,6 +120,8 @@ Room bossRoom("bossRoom", "nesw");
 Room pit("pit","e");
 Room river("river","nesw");
 Room changingRoom("changingRoom","ns");
+Room choke("choke","ew");
+Room cave("cave","nsew");
 struct Room *currentRoom;
 
 void setupRooms(){
@@ -137,9 +139,13 @@ void setupRooms(){
     sewer.north->clickables.push_back(new WayOn(&river));
     sewer.south->clickables.push_back(new WayOn(&changingRoom, "south"));
     changingRoom.south->clickables.push_back(new Locker());
+    changingRoom.north->clickables.push_back(new WayOn(&sewer, "north"));
     sewer.resident=new Rat();
     river.resident=new Fish();
     river.south->clickables.push_back(new WayOn(&sewer, "south"));
+    choke.east->clickables.push_back(new WayOn(&river, "east"));
+    cave.west->clickables.push_back(new WayOn(&river, "west"));
+    cave.resident=new Crab();
 }
 
 

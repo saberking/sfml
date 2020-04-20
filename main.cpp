@@ -167,7 +167,9 @@ void leftClick(sf::Vector2i pos){
                 if(((Locker*)target)->full)
                 msg.addStatement("You get 4 wetsuits!");
                 ((Locker*)target)->full=false;
-                //make river passable
+                sewer.resident=new Security();
+                river.east->clickables.push_back(new WayOn(&cave, "east"));
+                river.west->clickables.push_back(new WayOn(&choke, "west"));
             }
         }
         currentRoom=destination;
