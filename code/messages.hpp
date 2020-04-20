@@ -33,7 +33,6 @@ struct StatementBox{
         // set the text style
         text.setStyle(sf::Text::Bold | sf::Text::Underlined);
         text.setPosition(sf::Vector2f(100.f, 500.f));
-        addStatement("You are attacked by an unarmed goblin!");
 
     };
     void addStatement(string statement){

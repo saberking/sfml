@@ -16,6 +16,7 @@ struct Battle{
     sf::RenderTexture tex;
     sf::Sprite sprite;
     bool inCombat;
+    bool fireball[4];
     void end(){
         inCombat=false;
         for(list<Being*>::iterator it=combatants.begin();it!=combatants.end();it++){
@@ -33,6 +34,7 @@ struct Battle{
         combatants.clear();
         for(int i=0;i<4;i++){
             if(chars[i].sta>0)combatants.push_back(&chars[i]);
+            fireball[i]=false;
         }
         combatants.push_back(mon);
         current=combatants.end();
@@ -40,6 +42,9 @@ struct Battle{
         tex.draw(monsters.front()->sprite);
         tex.display();
         sprite.setTexture(tex.getTexture());
+        msg.clear();
+        msg.addStatement("You are attacked by a "+mon->name+"!");
+        msg.addStatement("");
     };
     vector<Being*> getEnemies(){
         vector<Being*> vec;
@@ -60,7 +65,8 @@ struct Battle{
         msg.addStatement(a.name+" casts fireball at "+d.name);
         int castingCost=rand()%6;
         castingCost-=a.cInt;
-        if(castingCost<a.sta){
+        if(castingCost<1)castingCost=1;
+        if(castingCost<=a.sta){
             int dam=(rand()%6)*a.cInt;
             d.sta-=dam;
             msg.addStatement(to_string(dam)+" stamina lost!");
@@ -122,12 +128,26 @@ struct Battle{
                 defender=friends.at(rand()%friends.size());
             }
             if((*current)->standing){
+                bool f=false;
+                // if(!(*current)->hostile){
+                //     for(int i=0;i<4;i++){
+                //         if(*current==&chars[i]){
+                //             if(fireball[i]){
+                //                 f=true;
+                //                 fireball[i]=false;
+                //             }
+                //         }
+                //     }
+                // }
+                // else 
                 if(rand()%2){
-                    attack(**current, *defender);
-                }else{
-                    castSpell(**current, *defender);
+                    f=true;
                 }
-
+                if(f){
+                    castSpell(**current, *defender);
+                }else{
+                    attack(**current, *defender);
+                }
             }else{
                 msg.addStatement((*current)->name+" stands up!");
                 (*current)->standing=true;

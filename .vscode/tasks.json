@@ -9,7 +9,7 @@
             "command": "C:\\MinGW\\bin\\g++.exe",
             "args": [
                 "-g",
-                "${file}",
+                "${fileDirname}\\main.cpp",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
                 "-l:libsfml-graphics.a",
