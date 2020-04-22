@@ -13,14 +13,15 @@ int gold=0;
 sf::Font font;
 float turnLength=0.7;
   std::string currentDirection;
+  string mode="main";
 
  sf::RenderWindow window(sf::VideoMode(1200, 700), "Gob");
 
 
 
  sf::Text goldText;
- sf::Sprite minimap,blood, sidebarSprite, compass, needle, bag, tent,needle2;
- sf::Texture minimapt,bloodt, compasst, needlet, bagt, tentt;
+ sf::Sprite minimap,blood, sidebarSprite, compass, needle, bag, tent,needle2,inv;
+ sf::Texture minimapt,bloodt, compasst, needlet, bagt, tentt,invt;
  sf::RenderTexture sidebar;
 sf::Sprite fireball, chest;
 sf::Texture fireballt, chestt;
@@ -122,47 +123,68 @@ void setup(){
     fireball.setTexture(fireballt);
     chestt.loadFromFile("objects/chest.png");
     chest.setTexture(chestt);
+    invt.loadFromFile("other/inv.png");
+    inv.setTexture(invt);
 }
 bool isThereAChest(){
     View* view=currentRoom->getView(currentDirection);
-    for(vector<Clickable*>::iterator it=view->clickables.begin();it!=view->clickables.end();it++){
+    for(list<Clickable*>::iterator it=view->clickables.begin();it!=view->clickables.end();it++){
         if((*it)->objectType=="chest"){
             return true;
         }
     }
     return false;
 }
+void drawEquip(int ch){
+    int xoff=600*(ch%2);
+    int yoff=350*((int)(ch/2));
+    if(chars[ch].weapon!=NULL){
+        chars[ch].weapon->pic.setPosition(sf::Vector2f((float)xoff+180,(float)yoff+90));
+        window.draw(chars[ch].weapon->pic);
+    }
+}
+void drawInventory(){
+    window.draw(inv);
+    for(int i=0;i<4;i++){
+        drawEquip(i);
+    }
 
+}
 
 void drawWindow(){
             window.clear();
-        window.draw(currentRoom->getView(currentDirection)->sprite);
-        if(isThereAChest()){
-            window.draw(chest);
-        }
-        if(battle.inCombat){
+        if(mode=="inventory"){
+            drawInventory();
+        }else {
+            window.draw(currentRoom->getView(currentDirection)->sprite);
+            if(isThereAChest()){
+                window.draw(chest);
+            }
+            if(battle.inCombat){
             window.draw(battle.sprite);
 
-        }else{
+            }else{
 
-        }
+            }
                     window.draw(compass);
             needleDirection(currentDirection,needle);
             window.draw(needle);
-        window.draw(*msg.getText());
-        redrawSidebar();
-        window.draw(sidebarSprite);
+            window.draw(*msg.getText());
+            redrawSidebar();
+            window.draw(sidebarSprite);
 
-        if(battle.inCombat&&!battle.getEnemies().size())window.draw(blood);
-        if(mapp.visible){
-            window.draw(mapp.getSprite());
-            sf::Vector2f centre=currentRoom->mapRegion.centre();
-            centre.x*=40;centre.x+=40;
-            centre.y*=40;centre.y+=40;
-            needle2.setPosition(centre);
-            needleDirection(currentDirection,needle2);
-            window.draw(needle2);
+            if(battle.inCombat&&!battle.getEnemies().size())window.draw(blood);
+            if(mapp.visible){
+                window.draw(mapp.getSprite());
+                sf::Vector2f centre=currentRoom->mapRegion.centre();
+                centre.x*=40;centre.x+=40;
+                centre.y*=40;centre.y+=40;
+                needle2.setPosition(centre);
+                needleDirection(currentDirection,needle2);
+                window.draw(needle2);
+            }
         }
+
         window.display();
 }
 

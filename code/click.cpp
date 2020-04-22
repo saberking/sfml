@@ -3,6 +3,7 @@
 #include "headers/battle.hpp"
 #include "headers/map.hpp"
 #include "headers/util.hpp"
+extern string mode;
 extern Room cave;
 void camp(){
     if(rand()%2){
@@ -35,7 +36,7 @@ bool mouseInRegion(Region *region){
     return pos.x>=region->left && pos.x<=region->right&&pos.y>=region->top&&pos.y<=region->bottom;
 }
 Clickable* getClickTarget(sf::Vector2i pos){
-            for(vector<Clickable*>::iterator it=currentRoom->getView(currentDirection)->clickables.begin();
+            for(list<Clickable*>::iterator it=currentRoom->getView(currentDirection)->clickables.begin();
         it!=currentRoom->getView(currentDirection)->clickables.end();it++){
             if(mouseInRegion((*it)->region)) return *it;
         }
@@ -57,6 +58,10 @@ void needleDirection(string direction, sf::Sprite &n){
 
 }
 void leftClick(sf::Vector2i pos){
+    if(mode=="inventory"){
+        mode="main";
+        return;
+    }
     if(mapp.visible){
         mapp.visible=false;
         return;
@@ -82,6 +87,9 @@ void leftClick(sf::Vector2i pos){
     }
     else if (pos.x>1140)turnRight();
     else if (pos.x<60)turnLeft();
+    else if(pos.x>900&&pos.x<1020&&pos.y>200&&pos.y<680){
+        mode="inventory";
+    }
     else{
         Room *destination=currentRoom;
         string newDirection=currentDirection;
@@ -123,9 +131,16 @@ void rightClick(sf::Vector2i pos){
             Clickable *target=getClickTarget(pos);
             if(target!=NULL){
                 if(target->objectType=="chest"){
-                    msg.addStatement("You smash the chest! P1 gets a club!");
-                    chars[0].weapon=new Club();
-                    currentRoom->getView(currentDirection)->clickables=vector<Clickable*>();
+                    msg.addStatement("You smash the chest!");
+                    currentRoom->getView(currentDirection)->clickables.remove(target);
+
+                    for(int i=0;i<4;i++){
+                        if(chars[i].weapon==NULL){
+                            msg.addStatement("P"+to_string(i+1)+" gets a club!");
+                            chars[i].weapon=new Club();
+                        }
+                    }
+
                 }
             }
 

@@ -58,7 +58,7 @@ struct Chest:public Clickable{
 struct View{
     sf::Sprite sprite;
     sf::Texture texture;
-    std::vector<Clickable *> clickables;
+    std::list<Clickable *> clickables;
     View(string name){
         texture.loadFromFile("rooms/"+name+".png");
         sprite.setTexture(texture);

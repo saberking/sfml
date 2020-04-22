@@ -78,6 +78,11 @@ struct Crab:Monster{
 struct Spider:Monster{
     Spider():Monster("spider", 0){}
 };
+struct Dog:Monster{
+    Dog():Monster("dog",0){}
+};
+
+
 extern Being p1, p2, p3, p4;
 extern Being chars[4];
 

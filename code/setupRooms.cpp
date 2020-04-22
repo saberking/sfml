@@ -21,7 +21,7 @@ struct Room *currentRoom;
 
 void setupRooms(){
 
-    currentRoom=&cave;
+    currentRoom=&cave2p;
     cell.north->clickables.push_back(new WayOn(&passage));
     passage.south->clickables.push_back(new WayOn(&cell, "south", &fs) );
     passage.north->clickables.push_back(new WayOn(&store, "west", &lft));
@@ -55,6 +55,7 @@ void setupRooms(){
     cave2p.south->clickables.push_back(new WayOn(&cave,"west",&rgt));
     cave3.south->clickables.push_back(new WayOn(&cave2p, "south", &fs));
     cave4.north->clickables.push_back(new WayOn(&cave2p, "north", &fs));
+    cave4.resident = new Dog();
     cave3.north->clickables.push_back(new Chest(10));
 
     cave2p.resident=new Spider();

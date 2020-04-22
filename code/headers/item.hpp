@@ -10,7 +10,11 @@ struct Item {
     Item(string _name, string _type, int _weight):weight{_weight}{
         name.assign(_name);
         type.assign(_type);
+        tex.loadFromFile("items/"+name+".png");
+        pic.setTexture(tex);
     }
+    sf::Sprite pic;
+    sf::Texture tex;
 };
 struct Weapon: public Item{
     int att;
