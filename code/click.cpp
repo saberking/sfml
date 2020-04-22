@@ -121,6 +121,12 @@ void leftClick(sf::Vector2i pos){
         if(destination!=currentRoom){
                             mapp.reveal(destination);
         currentRoom=destination;
+        if(!currentRoom->visited){
+            currentRoom->visited=true;
+            if(!currentRoom->welcomeText.empty()){
+                msg.addStatement(currentRoom->welcomeText);
+            }
+        }
 
         }
         currentDirection=newDirection;

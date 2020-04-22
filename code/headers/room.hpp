@@ -65,6 +65,7 @@ struct View{
     };
 };
 struct Room{
+    int map=0;
     string name;
     bool dangerous=true;
     View *north, *east, *south, *west;
@@ -76,9 +77,11 @@ struct Room{
         if(direction=="south")return south;
         return west;
     }
-    Room(Region *mr, string _name, string views="", string typ="wall"){
+    Room(Region *mr, string _name, string views="", string typ="wall", int level=1, deque<string> welcome={}){
         mapRegion=*mr;
         name=_name;
+        welcomeText=welcome;
+        map=level;
         if(views.find("n")!=string::npos)north=new View(name+"North");
         else north = new View(typ);
         if(views.find("e")!=string::npos)east=new View(name+"East");
@@ -96,6 +99,8 @@ struct Room{
         delete south;
         delete west;
     }
+        bool visited=false;
+    deque<string> welcomeText;
 
     bool hasView(string direction){
         if(direction=="north")return (bool)north;

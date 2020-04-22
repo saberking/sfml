@@ -12,12 +12,15 @@ Room cave(new Region(5,8,17,23),"cave","nsew");
 Room cave2p(new Region(5,8,24,25),"cave2p","nesw");
 Room cave3(new Region(2,5, 25,28),"cave3","ns","caveWall");
 Room cave4(new Region(8,11,25,28),"cave4","ns","caveWall");
+Room tunnel(new Region(24,28,11,15),"tunnel","ns","cavewall",1, deque<string>{"You see the light at the end of the tunnel:"," The entrance!"});
+Room mountain(new Region(1,4,14,16),"mountain","en","mountain",2,deque<string>{"As you climb out, a boulder is dislodged.","It falls behind you blocking the entrance!"});
 struct Room *currentRoom;
-    struct Region fs(0,699,0,1199);
-    struct Region lft(0, 699, 0, 599);
-    struct Region leverRegion(100, 400, 400, 800);
-    Region chestRegion(360,610,400,800);
-    Region rgt(0, 699, 600, 1199);
+struct Region fs(0,699,0,1199);
+struct Region lft(0, 699, 0, 599);
+struct Region leverRegion(100, 400, 400, 800);
+Region chestRegion(360,610,400,800);
+Region rgt(0, 699, 600, 1199);
+
 
 void setupRooms(){
 
@@ -36,7 +39,7 @@ void setupRooms(){
     bossRoom.east->clickables.push_back(new Lever("pit trap"));
     pit.east->clickables.push_back(new WayOn(&sewer, "east", &fs));
     sewer.west->clickables.push_back(new WayOn(&pit,"west", &fs));
-    sewer.north->clickables.push_back(new WayOn(&river));
+    sewer.north->clickables.push_back(new WayOn(&river,"north",&fs));
     sewer.south->clickables.push_back(new WayOn(&changingRoom, "south", &fs));
     changingRoom.south->clickables.push_back(new Locker());
     changingRoom.north->clickables.push_back(new WayOn(&sewer, "north", &fs));
@@ -56,6 +59,9 @@ void setupRooms(){
     cave3.south->clickables.push_back(new WayOn(&cave2p, "south", &fs));
     cave4.north->clickables.push_back(new WayOn(&cave2p, "north", &fs));
     cave4.resident = new Dog();
+    cave4.south->clickables.push_back(new WayOn(&tunnel,"south",&fs));
+    tunnel.north->clickables.push_back(new WayOn(&cave4,"north",&fs));
+    tunnel.south->clickables.push_back(new WayOn(&mountain,"south",&fs));
     cave3.north->clickables.push_back(new Chest(10));
 
     cave2p.resident=new Spider();

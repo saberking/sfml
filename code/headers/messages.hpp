@@ -33,6 +33,11 @@ struct StatementBox{
     void addStatement(string statement){
         queue.push_back(statement);
     };
+    void addStatement(deque<string>msgs){
+        for(deque<string>::iterator i=msgs.begin();i!=msgs.end();i++){
+            queue.push_back(*i);
+        }
+    }
     void clear(){
 noOfLines=0;
                     update();
