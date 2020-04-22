@@ -5,6 +5,7 @@
 #include "headers/util.hpp"
 extern string mode;
 extern Room cave;
+Item *shopItem = new Bow;
 void camp(){
     if(rand()%2){
         for(int i=0;i<4;i++){
@@ -59,11 +60,36 @@ void needleDirection(string direction, sf::Sprite &n){
 }
 void leftClick(sf::Vector2i pos){
     if(mode=="inventory"){
+        for(int i=0;i<2;i++){
+            if(pos.x>150+i*600&&pos.x<250+i*600){
+                for(int j=0;j<2;j++){
+                    if(pos.y<180+350*j&&pos.y>80+350*j){
+                        currentRoom->item=chars[2*i+j].weapon;
+                        chars[2*i+j].weapon=NULL;
+                    }
+                }
+            }
+
+        }
+        if(pos.x)
         mode="main";
         return;
     }
     if(mapp.visible){
         mapp.visible=false;
+        return;
+    }
+    if(mode=="shop"){
+        if(pos.y>300&&pos.y<400){
+            if(pos.x>300&&pos.x<400){
+                if(gold>=shopItem->value){
+                    currentRoom->item=shopItem;
+                    shopItem=new Bow;
+                    gold-=shopItem->value;
+                }
+            }
+        }
+        mode="main";
         return;
     }
     if(pos.x>1060&&pos.y>560){
@@ -80,8 +106,10 @@ void leftClick(sf::Vector2i pos){
                 setDirection("east");
             }
         }
-    }else if (pos.x>1060&&pos.y>310&&pos.y<430){
+    }else if (pos.x>1060&&pos.y>310&&pos.y<420){
         camp();
+    }else if (pos.x>1060&&pos.y>420&&pos.y<560){
+        mode="shop";
     }else if(pos.x>1060&&pos.y>190&&pos.y<310){
         mapp.visible=true;
     }
@@ -89,8 +117,15 @@ void leftClick(sf::Vector2i pos){
     else if (pos.x<60)turnLeft();
     else if(pos.x>900&&pos.x<1020&&pos.y>200&&pos.y<680){
         mode="inventory";
-    }
-    else{
+    }else if(pos.x>550&&pos.x<650&&pos.y>300&&pos.y<400&&currentRoom->item!=NULL){
+        for (int i=0;i<4;i++){
+            if(chars[i].weapon==NULL){
+                chars[i].weapon=(Weapon*)currentRoom->item;
+                currentRoom->item=NULL;
+                return;
+            }
+        }
+    }else{
         Room *destination=currentRoom;
         string newDirection=currentDirection;
         Clickable *target=getClickTarget(pos);

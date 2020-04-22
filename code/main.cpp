@@ -6,6 +6,7 @@
 #include "headers/util.hpp"
 Being p1("ch1"), p2("ch2"), p3("ch3"), p4("ch4");
 Being chars[4]={p1,p2,p3,p4};
+extern Item* shopItem;
 Battle battle;
 StatementBox msg;
 Map mapp;
@@ -20,8 +21,8 @@ float turnLength=0.7;
 
 
  sf::Text goldText;
- sf::Sprite minimap,blood, sidebarSprite, compass, needle, bag, tent,needle2,inv;
- sf::Texture minimapt,bloodt, compasst, needlet, bagt, tentt,invt;
+ sf::Sprite minimap,blood, sidebarSprite, compass, needle, bag, tent,needle2,inv,shop;
+ sf::Texture minimapt,bloodt, compasst, needlet, bagt, tentt,invt,shopt;
  sf::RenderTexture sidebar;
 sf::Sprite fireball, chest;
 sf::Texture fireballt, chestt;
@@ -125,6 +126,8 @@ void setup(){
     chest.setTexture(chestt);
     invt.loadFromFile("other/inv.png");
     inv.setTexture(invt);
+    shopt.loadFromFile("other/shop.png");
+    shop.setTexture(shopt);
 }
 bool isThereAChest(){
     View* view=currentRoom->getView(currentDirection);
@@ -139,7 +142,7 @@ void drawEquip(int ch){
     int xoff=600*(ch%2);
     int yoff=350*((int)(ch/2));
     if(chars[ch].weapon!=NULL){
-        chars[ch].weapon->pic.setPosition(sf::Vector2f((float)xoff+180,(float)yoff+90));
+        chars[ch].weapon->pic.setPosition(sf::Vector2f((float)xoff+150,(float)yoff+80));
         window.draw(chars[ch].weapon->pic);
     }
 }
@@ -150,12 +153,19 @@ void drawInventory(){
     }
 
 }
+void drawShop(){
+    window.draw(shop);
+    shopItem->pic.setPosition(sf::Vector2f((float)300,(float)300));
+    window.draw(shopItem->pic);
+}
 
 void drawWindow(){
             window.clear();
         if(mode=="inventory"){
             drawInventory();
-        }else {
+        }else if(mode=="shop"){
+            drawShop();
+        }else{
             window.draw(currentRoom->getView(currentDirection)->sprite);
             if(isThereAChest()){
                 window.draw(chest);
@@ -172,6 +182,10 @@ void drawWindow(){
             window.draw(*msg.getText());
             redrawSidebar();
             window.draw(sidebarSprite);
+            if(currentRoom->item!=NULL){
+                currentRoom->item->pic.setPosition(sf::Vector2f((float)550,(float)300));
+                window.draw(currentRoom->item->pic);
+            }
 
             if(battle.inCombat&&!battle.getEnemies().size())window.draw(blood);
             if(mapp.visible){

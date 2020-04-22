@@ -71,6 +71,9 @@ struct Room{
     View *north, *east, *south, *west;
     Monster *resident=NULL;
     Region mapRegion;
+            bool visited=false;
+    deque<string> welcomeText;
+    Item *item=NULL;
     View* getView(string direction){
         if(direction=="north")return north;
         if(direction=="east") return east;
@@ -99,8 +102,7 @@ struct Room{
         delete south;
         delete west;
     }
-        bool visited=false;
-    deque<string> welcomeText;
+
 
     bool hasView(string direction){
         if(direction=="north")return (bool)north;
